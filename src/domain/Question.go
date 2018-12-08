@@ -1,25 +1,25 @@
 package domain
 
 type Choice struct {
-	content string
+	Content string
 }
 
 type Tag struct {
 	Name string
 }
 
-type Edition struct {
-	Number int
+type PDF struct {
+	Content []byte
 }
 
-type PDF struct {
-	content []byte
+type Id struct {
+	Value string
 }
 
 type Question struct {
+	Id
 	PDF
 	Answer  int
 	Choices []Choice
 	Tags    []Tag
-	Edition
 }

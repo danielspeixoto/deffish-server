@@ -2,11 +2,15 @@ package data
 
 import (
 	"deffish-server/src/domain"
+	"fmt"
 	"reflect"
 	"testing"
 )
 
-var repo = NewMongoQuestionRepository("mongo://localhost:20171", "deffishtest")
+var repo = NewMongoQuestionRepository(
+	"mongodb://localhost:27017",
+	"deffishtest",
+	"questions")
 
 func TestMain(m *testing.M) {
 	err := repo.Drop()
@@ -19,7 +23,7 @@ func TestMain(m *testing.M) {
 func TestInsertedItemsCanBeRetrieved(t *testing.T) {
 	question := domain.Question{
 		PDF: domain.PDF{
-			content: []byte{
+			Content: []byte{
 				1,0,1,0,1,
 			},
 		},
@@ -29,13 +33,11 @@ func TestInsertedItemsCanBeRetrieved(t *testing.T) {
 		},
 		Tags: [] domain.Tag{
 			{"matematica"},
-			{"enem"},
-		},
-		Edition: domain.Edition{
-			Number: 2017,
+			{"enem2017"},
 		},
 	}
-	err := repo.Insert(question)
+	id, err := repo.Insert(question)
+	fmt.Print(id)
 	if err != nil {
 		t.Fatal(err)
 	}
