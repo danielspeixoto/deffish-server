@@ -27,13 +27,16 @@ func NewMongoQuestionRepository(
 	}
 }
 
-func (repo MongoQuestionRepository) Insert(question domain.Question) (interface{}, error) {
+func (repo MongoQuestionRepository) Insert(question domain.Question) (domain.Id, error) {
 	ctx, _ := context.WithTimeout(context.Background(), 1 * time.Second)
 	res, err := repo.questions.InsertOne(
 		ctx,
 		toMongoQuestion(question))
-
-	return res.InsertedID,  err
+	if err != nil { return domain.Id{}, err }
+	id := domain.Id{
+		Value: res.InsertedID.(primitive.ObjectID).String(),
+	}
+	return id,  nil
 }
 
 func (repo MongoQuestionRepository) Drop() error {
