@@ -3,6 +3,7 @@ package data
 import (
 	"context"
 	"deffish-server/src/domain"
+	"deffish-server/src/domain/gateway"
 	"github.com/mongodb/mongo-go-driver/bson/primitive"
 	"github.com/mongodb/mongo-go-driver/mongo"
 	"time"
@@ -10,6 +11,16 @@ import (
 
 type MongoQuestionRepository struct {
 	questions *mongo.Collection
+}
+
+var _ gateway.IQuestionRepository = (*MongoQuestionRepository)(nil)
+
+type MongoQuestion struct {
+	Id primitive.ObjectID `bson:"_id,omitempty"`
+	PDF []byte `bson:"pdf"`
+	Answer int `bson:"answer"`
+	Choices []string `bson:"choices"`
+	Tags []string `bson:"tags"`
 }
 
 func NewMongoQuestionRepository(
@@ -58,11 +69,11 @@ func (repo MongoQuestionRepository) Find() ([]domain.Question, error) {
 	return items, nil
 }
 
-//func (repo MongoQuestionRepository) Random() (domain.Question, error) {
-//
-//}
+func (repo MongoQuestionRepository) Random(amount int, tags []domain.Tag) ([]domain.Question, error) {
+	panic("implement me")
+}
 
-func fromMongoToQuestion(doc MongoQuestion) domain.Question {
+  func fromMongoToQuestion(doc MongoQuestion) domain.Question {
 	var choices []domain.Choice
 	for _, element := range doc.Choices {
 		choices = append(choices, domain.Choice{
@@ -108,10 +119,3 @@ func toMongoQuestion(question domain.Question) MongoQuestion{
 }
 
 
-type MongoQuestion struct {
-	Id primitive.ObjectID `bson:"_id,omitempty"`
-	PDF []byte `bson:"pdf"`
-	Answer int `bson:"answer"`
-	Choices []string `bson:"choices"`
-	Tags []string `bson:"tags"`
-}
