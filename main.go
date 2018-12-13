@@ -7,7 +7,7 @@ import (
 
 func main() {
 	presentation.NewHandler(data.NewMongoQuestionRepository(
-		"mongodb://localhost:27017",
+		"mongodb://192.168.0.11:27017",
 		"deffishtest",
 		"questions"), 5000)
 }
