@@ -26,6 +26,7 @@ func NewHandler(repo gateway.IQuestionRepository, port int) {
 
 func (handler Handler) controllerCall(callback func(Controller, *http.Request)) func(writer http.ResponseWriter, request *http.Request) {
 	return func(writer http.ResponseWriter, request *http.Request) {
+		log.Printf("Request at %s", request.URL.Path)
 		ctrl := controller(Presenter{Writer: writer}, handler.Repo)
 		callback(ctrl, request)
 	}
