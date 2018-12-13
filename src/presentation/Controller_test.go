@@ -24,7 +24,7 @@ var question = domain.Question{
 	},
 }
 
-func TestUpload(t *testing.T) {
+func TestController_Upload(t *testing.T) {
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()
 
@@ -51,4 +51,22 @@ func TestUpload(t *testing.T) {
 	if err != nil { panic(err) }
 
 	controller.Upload(request)
+}
+
+func TestController_Random(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+
+	useCase := mock_boundary.NewMockIRandomQuestionUseCase(mockCtrl)
+
+	controller := Controller{RandomQuestionUseCase: useCase}
+
+	useCase.EXPECT().
+		Random(2, []domain.Tag{{Name: "enem"}, {Name: "matematica"}})
+
+	request, err := http.NewRequest(
+		"GET", "/random?amount=2&tags[]=enem&tags[]=matematica", nil)
+	if err != nil { panic(err) }
+
+	controller.Random(request)
 }

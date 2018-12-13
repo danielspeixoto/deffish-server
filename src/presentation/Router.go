@@ -15,26 +15,30 @@ type Handler struct {
 func NewHandler(repo gateway.IQuestionRepository, port int) {
 	handler := Handler{
 		repo,
+
 	}
-	http.HandleFunc("/upload", handler.upload)
-	http.HandleFunc("/status", handler.status)
+	http.HandleFunc("/status", handler.controllerCall(status))
+	http.HandleFunc("/questions/random", handler.controllerCall(random))
+	http.HandleFunc("questions/", handler.controllerCall(upload))
 
 	log.Fatal(http.ListenAndServe(":" + strconv.Itoa(port), nil))
 }
 
-
-func (handler Handler) upload(writer http.ResponseWriter, request *http.Request) {
-	ctrl := controller(Presenter{Writer: writer}, handler.Repo)
-	ctrl.Upload(request)
-}
-
-func (handler Handler) status(writer http.ResponseWriter, request *http.Request) {
-	ctrl := controller(Presenter{Writer: writer}, handler.Repo)
-	ctrl.Status(request)
+func (handler Handler) controllerCall(callback func(Controller, *http.Request)) func(writer http.ResponseWriter, request *http.Request) {
+	return func(writer http.ResponseWriter, request *http.Request) {
+		ctrl := controller(Presenter{Writer: writer}, handler.Repo)
+		callback(ctrl, request)
+	}
 }
 
 func controller(presenter Presenter, repo gateway.IQuestionRepository) Controller {
 	uploadQuestion := usecase.UploadQuestionUseCase{Repo: repo, Presenter: presenter}
 	status := usecase.StatusUseCase{Repo: repo, Presenter: presenter}
-	return Controller{UploadQuestionUseCase: uploadQuestion, StatusUseCase:status}
+	random := usecase.RandomQuestionUseCase{Repo:repo, Presenter:presenter, MaxQuestions:10}
+	return Controller{UploadQuestionUseCase: uploadQuestion,
+		StatusUseCase:status, RandomQuestionUseCase:random}
 }
+
+func upload(ctrl Controller, request *http.Request) { ctrl.Upload(request) }
+func status(ctrl Controller, request *http.Request) { ctrl.Status(request) }
+func random(ctrl Controller, request *http.Request) { ctrl.Random(request) }

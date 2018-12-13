@@ -1,6 +1,7 @@
 package presentation
 
 import (
+	"deffish-server/src/domain"
 	"github.com/pkg/errors"
 	"net/http"
 	"net/http/httptest"
@@ -8,7 +9,7 @@ import (
 	"testing"
 )
 
-func TestOnQuestionUploaded(t *testing.T) {
+func TestPresenter_OnQuestionUploaded(t *testing.T) {
 	recorder := httptest.NewRecorder()
 	presenter := Presenter{Writer: recorder}
 	presenter.OnQuestionUploaded()
@@ -26,7 +27,7 @@ func TestOnQuestionUploaded(t *testing.T) {
 	}
 }
 
-func TestStatus(t *testing.T) {
+func TestPresenter_Status(t *testing.T) {
 	recorder := httptest.NewRecorder()
 	presenter := Presenter{Writer: recorder}
 	presenter.Status("status")
@@ -46,7 +47,7 @@ func TestStatus(t *testing.T) {
 	}
 }
 
-func TestError(t *testing.T) {
+func TestPresenter_OnError(t *testing.T) {
 	recorder := httptest.NewRecorder()
 	presenter := Presenter{Writer: recorder}
 	presenter.OnError(errors.New("an error explained"))
@@ -59,6 +60,36 @@ func TestError(t *testing.T) {
 	}
 
 	expected := `{"status":"error"}`
+	body := strings.TrimRight(recorder.Body.String(), "\n")
+	if body != expected {
+		t.Errorf("handler returned unexpected body:\n got  %v want %v",
+			body, expected)
+	}
+}
+
+func TestPresenter_OnQuestionReceived(t *testing.T) {
+	recorder := httptest.NewRecorder()
+	presenter := Presenter{Writer: recorder}
+
+	presenter.OnQuestionReceived([]domain.Question{
+		{
+			Id: domain.Id{Value: "1"},
+			PDF: domain.PDF{Content: []byte{1,0}},
+			Answer: 0,
+		},
+		{
+			Id: domain.Id{Value: "2"},
+			PDF: domain.PDF{Content: []byte{0,1}},
+			Answer: 1,
+		},
+	})
+
+	if status := recorder.Code; status != http.StatusOK {
+		t.Errorf("handler returned wrong status code: got %v want %v",
+			status , http.StatusOK)
+	}
+
+	expected := `{"status":"ok","data":[{"pdf":"AQA=","answer":0,"choices":null,"tags":null},{"pdf":"AAE=","answer":1,"choices":null,"tags":null}]}`
 	body := strings.TrimRight(recorder.Body.String(), "\n")
 	if body != expected {
 		t.Errorf("handler returned unexpected body:\n got  %v want %v",

@@ -6,18 +6,13 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"strconv"
 )
 
 type Controller struct {
 	UploadQuestionUseCase boundary.IUploadQuestionUseCase
+	RandomQuestionUseCase boundary.IRandomQuestionUseCase
 	StatusUseCase         boundary.IStatusUseCase
-}
-
-type Question struct {
-	Pdf []byte
-	Answer int
-	Choices []string
-	Tags []string
 }
 
 func (ctrl Controller) Upload(request *http.Request) {
@@ -36,27 +31,31 @@ func (ctrl Controller) Status(request *http.Request) {
 	ctrl.StatusUseCase.Status()
 }
 
-func fromRequestToQuestion(question Question) domain.Question {
-	var choices []domain.Choice
-	for _, element := range question.Choices {
-		choices = append(choices, domain.Choice{
-			Content: element,
-		})
+func (ctrl Controller) Random(request *http.Request) {
+	params := request.URL.Query()
+
+	amountParam, ok := params["amount"]
+	if !ok || len(amountParam[0]) < 1 {
+		panic("Url param 'amount' is missing")
+	}
+
+	tagsParam, ok := params["tags[]"]
+	if !ok || len(tagsParam[0]) < 1 {
+		panic("Url param 'tags' is missing")
 	}
 
 	var tags []domain.Tag
-	for _, element := range question.Tags {
+	for _, element := range tagsParam {
 		tags = append(tags, domain.Tag{
 			Name: element,
 		})
 	}
 
-	return domain.Question{
-		PDF: domain.PDF{
-			Content: question.Pdf,
-		},
-		Answer: question.Answer,
-		Choices: choices,
-		Tags: tags,
+	amount, err := strconv.Atoi(amountParam[0])
+	if err != nil {
+		panic(err)
 	}
+
+	ctrl.RandomQuestionUseCase.Random(amount, tags)
 }
+

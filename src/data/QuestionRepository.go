@@ -4,6 +4,7 @@ import (
 	"context"
 	"deffish-server/src/domain"
 	"deffish-server/src/domain/gateway"
+	"deffish-server/src/helpers"
 	"github.com/mongodb/mongo-go-driver/bson"
 	"github.com/mongodb/mongo-go-driver/bson/primitive"
 	"github.com/mongodb/mongo-go-driver/mongo"
@@ -69,7 +70,7 @@ func (repo MongoQuestionRepository) Random(amount int, tags []domain.Tag) ([]dom
 			{"", bson.M{
 				"$match": bson.M{
 					"tags": bson.M{
-						"$all": tagsToStringArray(tags),
+						"$all": helpers.TagsToStringArray(tags),
 					},
 				},
 			}},
@@ -124,24 +125,7 @@ func toMongoQuestion(question domain.Question) MongoQuestion{
 	return MongoQuestion{
 		PDF: question.PDF.Content,
 		Answer: question.Answer,
-		Choices: choicesToStringArray(question.Choices),
-		Tags: tagsToStringArray(question.Tags),
+		Choices: helpers.ChoicesToStringArray(question.Choices),
+		Tags: helpers.TagsToStringArray(question.Tags),
 	}
 }
-
-func tagsToStringArray(tags []domain.Tag) []string {
-	var tagsStr []string
-	for _, element := range tags {
-		tagsStr = append(tagsStr, element.Name)
-	}
-	return tagsStr
-}
-
-func choicesToStringArray(choices []domain.Choice) []string {
-	var choicesStr []string
-	for _, element := range choices {
-		choicesStr = append(choicesStr, element.Content)
-	}
-	return choicesStr
-}
-

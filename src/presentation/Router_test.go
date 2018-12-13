@@ -14,7 +14,7 @@ import (
 	"testing"
 )
 
-func TestStatusRequest(t *testing.T) {
+func TestRouter_Status(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	repo := mock_gateway.NewMockIQuestionRepository(ctrl)
@@ -32,7 +32,7 @@ func TestStatusRequest(t *testing.T) {
 	}
 }
 
-func TestUploadRequest(t *testing.T) {
+func TestRouter_Upload(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
@@ -54,7 +54,7 @@ func TestUploadRequest(t *testing.T) {
 	})
 	if err != nil { panic(err) }
 	resp, err := http.Post(
-		"http://localhost:5000/upload",
+		"http://localhost:5000/questions/",
 		"application/json",
 		bytes.NewBuffer(body))
 
@@ -79,7 +79,7 @@ func TestUploadRequest(t *testing.T) {
 	}
 }
 
-func TestUploadRequestInvalid(t *testing.T) {
+func TestRouter_UploadInvalid(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
@@ -98,7 +98,7 @@ func TestUploadRequestInvalid(t *testing.T) {
 	})
 	if err != nil { panic(err) }
 	resp, err := http.Post(
-		"http://localhost:5000/upload",
+		"http://localhost:5000/questions/",
 		"application/json",
 		bytes.NewBuffer(body))
 
@@ -123,7 +123,7 @@ func TestUploadRequestInvalid(t *testing.T) {
 	}
 }
 
-func TestUploadRequestError(t *testing.T) {
+func TestRouter_UploadError(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
@@ -146,7 +146,7 @@ func TestUploadRequestError(t *testing.T) {
 	})
 	if err != nil { panic(err) }
 	resp, err := http.Post(
-		"http://localhost:5000/upload",
+		"http://localhost:5000/questions/",
 		"application/json",
 		bytes.NewBuffer(body))
 
@@ -168,5 +168,38 @@ func TestUploadRequestError(t *testing.T) {
 	if jsonResp.Status != expectedResponseStatus {
 		t.Errorf("wrong status code: got %v want %v",
 			jsonResp.Status , expectedResponseStatus)
+	}
+}
+
+func TestRouter_Random(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	repo := mock_gateway.NewMockIQuestionRepository(ctrl)
+	repo.EXPECT().
+		Random(2, gomock.Eq([]domain.Tag{{Name: "enem"}, {Name: "matematica"}})).
+		Return([]domain.Question{
+			{
+				Id: domain.Id{Value: "1"},
+			},
+			{
+				Id: domain.Id{Value: "2"},
+			},
+	},nil)
+	go NewHandler(repo, 5000)
+
+	resp, err := http.Get("http://localhost:5000/questions/random?amount=2&tags[]=enem&tags[]=matematica")
+	if err != nil { panic(err) }
+	body, err := ioutil.ReadAll(resp.Body)
+
+	var response Response
+	err = json.Unmarshal(body, &response)
+	if err != nil { panic(err) }
+	if response.Status != "ok" {
+		t.Fail()
+	}
+
+	arr := response.Data.([]interface{})
+	if arr[0].(map[string]interface{})["id"] != "1" {
+		t.Fail()
 	}
 }
