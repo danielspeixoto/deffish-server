@@ -11,7 +11,6 @@ type Presenter struct {
 }
 
 func (presenter Presenter) Status(status string) {
-	presenter.Writer.Header().Set("Content-Type", "application/json")
 	presenter.Writer.WriteHeader(http.StatusOK)
 	err := json.NewEncoder(presenter.Writer).Encode(Response{status})
 	if err != nil { panic(err) }
@@ -22,14 +21,15 @@ type Response struct {
 }
 
 func (presenter Presenter) OnQuestionUploaded() {
-
 	presenter.Writer.WriteHeader(http.StatusCreated)
 	err := json.NewEncoder(presenter.Writer).Encode(Response{"ok"})
 	if err != nil { panic(err) }
 }
 
-func (Presenter) OnError(error) {
-	panic("implement me")
+func (presenter Presenter) OnError(error) {
+	presenter.Writer.WriteHeader(http.StatusInternalServerError)
+	err := json.NewEncoder(presenter.Writer).Encode(Response{"error"})
+	if err != nil { panic(err) }
 }
 
 var _ boundary.IUploadQuestionPresenter = (*Presenter)(nil)

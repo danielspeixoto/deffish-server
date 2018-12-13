@@ -4,6 +4,7 @@ import (
 	"context"
 	"deffish-server/src/domain"
 	"deffish-server/src/domain/gateway"
+	"github.com/mongodb/mongo-go-driver/bson"
 	"github.com/mongodb/mongo-go-driver/bson/primitive"
 	"github.com/mongodb/mongo-go-driver/mongo"
 	"time"
@@ -58,6 +59,29 @@ func (repo MongoQuestionRepository) Find() ([]domain.Question, error) {
 	ctx, _ := context.WithTimeout(context.Background(), 1 * time.Second)
 	cursor, err := repo.questions.Find(ctx, nil)
 	if err != nil { return nil, err }
+	return fromCursorToQuestions(cursor)
+}
+
+func (repo MongoQuestionRepository) Random(amount int, tags []domain.Tag) ([]domain.Question, error) {
+	ctx, _ := context.WithTimeout(context.Background(), 10 * time.Second)
+	cursor, err := repo.questions.Aggregate(ctx,
+		bson.D{
+			{"", bson.M{
+				"$match": bson.M{
+					"tags": bson.M{
+						"$all": tagsToStringArray(tags),
+					},
+				},
+			}},
+			{"", bson.M{ "$sample": bson.M{"size": amount} }},
+		},
+	)
+	if err != nil { return nil, err }
+	return fromCursorToQuestions(cursor)
+}
+
+func fromCursorToQuestions(cursor mongo.Cursor) ([]domain.Question, error) {
+	ctx, _ := context.WithTimeout(context.Background(), 1 * time.Second)
 	defer cursor.Close(ctx)
 	var items []domain.Question
 	for cursor.Next(ctx) {
@@ -69,11 +93,7 @@ func (repo MongoQuestionRepository) Find() ([]domain.Question, error) {
 	return items, nil
 }
 
-func (repo MongoQuestionRepository) Random(amount int, tags []domain.Tag) ([]domain.Question, error) {
-	panic("implement me")
-}
-
-  func fromMongoToQuestion(doc MongoQuestion) domain.Question {
+func fromMongoToQuestion(doc MongoQuestion) domain.Question {
 	var choices []domain.Choice
 	for _, element := range doc.Choices {
 		choices = append(choices, domain.Choice{
@@ -101,21 +121,27 @@ func (repo MongoQuestionRepository) Random(amount int, tags []domain.Tag) ([]dom
 }
 
 func toMongoQuestion(question domain.Question) MongoQuestion{
-	var choices []string
-	for _, element := range question.Choices {
-		choices = append(choices, element.Content)
-	}
-
-	var tags []string
-	for _, element := range question.Tags {
-		tags = append(tags, element.Name)
-	}
 	return MongoQuestion{
 		PDF: question.PDF.Content,
 		Answer: question.Answer,
-		Choices: choices,
-		Tags: tags,
+		Choices: choicesToStringArray(question.Choices),
+		Tags: tagsToStringArray(question.Tags),
 	}
 }
 
+func tagsToStringArray(tags []domain.Tag) []string {
+	var tagsStr []string
+	for _, element := range tags {
+		tagsStr = append(tagsStr, element.Name)
+	}
+	return tagsStr
+}
+
+func choicesToStringArray(choices []domain.Choice) []string {
+	var choicesStr []string
+	for _, element := range choices {
+		choicesStr = append(choicesStr, element.Content)
+	}
+	return choicesStr
+}
 

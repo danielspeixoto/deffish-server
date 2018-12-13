@@ -5,7 +5,7 @@ import (
 )
 
 type IRandomQuestionUseCase interface {
-	Random(amount int, tags []domain.Tag) []domain.Question
+	Random(amount int, tags []domain.Tag)
 }
 
 type IRandomQuestionPresenter interface {

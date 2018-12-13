@@ -5,6 +5,7 @@ import (
 	"deffish-server/src/domain"
 	"io/ioutil"
 	"reflect"
+	"strconv"
 	"testing"
 )
 
@@ -50,6 +51,67 @@ func TestInsertedItemsCanBeRetrieved(t *testing.T) {
 	if bytes.Compare(mongoPdfBytes, pdfBytes) != 0 {
 		t.Fatal("PDF is different")
 	}
-
-
 }
+
+func TestRandomQuestions(t *testing.T) {
+	for i := 0; i < 5; i++ {
+		question := domain.Question{
+			PDF: domain.PDF{
+				Content: []byte{1},
+			},
+			Answer: i,
+			Tags: [] domain.Tag{
+				{strconv.Itoa(i)},
+			},
+		}
+		_, err := repo.Insert(question)
+		if err != nil { t.Fatal(err) }
+	}
+	for i := 0; i < 5; i++ {
+		question := domain.Question{
+			PDF: domain.PDF{
+				Content: []byte{1},
+			},
+			Answer: i + 10,
+			Tags: [] domain.Tag{
+				{"other"},
+				{strconv.Itoa(i + 10)},
+			},
+		}
+		_, err := repo.Insert(question)
+		if err != nil { t.Fatal(err) }
+	}
+
+
+	questions, err := repo.Random(100, []domain.Tag{{"other"}})
+	if err != nil { t.Fatal(err) }
+
+	if len(questions) != 5 {
+		t.Errorf("Random should return questions with tag. " +
+			"Expected: %v, Got: %v", 5, len(questions))
+	}
+
+	var randomQuestions []domain.Question
+	for i := 0; i < 5; i++ {
+		questions, err = repo.Random(1, []domain.Tag{{"other"}})
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if len(questions) != 1 {
+			t.Fail()
+		}
+		randomQuestions = append(randomQuestions, questions[0])
+	}
+
+	for i := 1; i < len(randomQuestions); i++ {
+		if randomQuestions[i].Answer != randomQuestions[0].Answer {
+			break
+		}
+		if i == len(randomQuestions) - 1 {
+			t.Errorf("No randomness")
+		}
+	}
+}
+
+
