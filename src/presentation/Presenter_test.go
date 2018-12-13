@@ -19,7 +19,7 @@ func TestPresenter_OnQuestionUploaded(t *testing.T) {
 			status , http.StatusCreated)
 	}
 
-	expected := `{"status":"ok"}`
+	expected := `{"status":"ok","data":null}`
 	body := strings.TrimRight(recorder.Body.String(), "\n")
 	if body != expected {
 		t.Errorf("handler returned unexpected body:\n got  %v want %v",
@@ -39,7 +39,7 @@ func TestPresenter_Status(t *testing.T) {
 			status , expectedStatus)
 	}
 
-	expected := `{"status":"status"}`
+	expected := `{"status":"status","data":null}`
 	body := strings.TrimRight(recorder.Body.String(), "\n")
 	if body != expected {
 		t.Errorf("handler returned unexpected body:\n got  %v want %v",
@@ -59,7 +59,7 @@ func TestPresenter_OnError(t *testing.T) {
 			status , expectedStatus)
 	}
 
-	expected := `{"status":"error"}`
+	expected := `{"status":"error","data":null}`
 	body := strings.TrimRight(recorder.Body.String(), "\n")
 	if body != expected {
 		t.Errorf("handler returned unexpected body:\n got  %v want %v",
@@ -89,7 +89,7 @@ func TestPresenter_OnQuestionReceived(t *testing.T) {
 			status , http.StatusOK)
 	}
 
-	expected := `{"status":"ok","data":[{"pdf":"AQA=","answer":0,"choices":null,"tags":null},{"pdf":"AAE=","answer":1,"choices":null,"tags":null}]}`
+	expected := `{"status":"ok","data":[{"id":"1","pdf":"AQA=","answer":0,"choices":null,"tags":null},{"id":"2","pdf":"AAE=","answer":1,"choices":null,"tags":null}]}`
 	body := strings.TrimRight(recorder.Body.String(), "\n")
 	if body != expected {
 		t.Errorf("handler returned unexpected body:\n got  %v want %v",
