@@ -1,1 +1,1 @@
-web: ./main $PORT
+web: ls && ./deffish-server

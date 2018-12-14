@@ -8,6 +8,7 @@ import (
 	"github.com/mongodb/mongo-go-driver/bson"
 	"github.com/mongodb/mongo-go-driver/bson/primitive"
 	"github.com/mongodb/mongo-go-driver/mongo"
+	"log"
 	"time"
 )
 
@@ -34,6 +35,7 @@ func NewMongoQuestionRepository(
 	if err != nil {
 		panic(err)
 	}
+	log.Printf("Connection to mongo successfull")
 	db := client.Database(database)
 	return &MongoQuestionRepository {
 		db.Collection(questionsCollection),
@@ -49,11 +51,17 @@ func (repo MongoQuestionRepository) Insert(question domain.Question) (domain.Id,
 	id := domain.Id{
 		Value: res.InsertedID.(primitive.ObjectID).String(),
 	}
+	log.Printf("question with id %s inserted", id.Value)
 	return id,  nil
 }
 
 func (repo MongoQuestionRepository) Drop() error {
-	return repo.questions.Drop(context.Background())
+	err := repo.questions.Drop(context.Background())
+	if err != nil {
+		return err
+	}
+	log.Printf("db dropped")
+	return nil
 }
 
 func (repo MongoQuestionRepository) Find() ([]domain.Question, error) {
