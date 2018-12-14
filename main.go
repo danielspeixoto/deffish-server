@@ -9,7 +9,22 @@ import (
 	"strconv"
 )
 
+type Config struct {
+	Port int
+	MongoConnection string
+	DBName string
+}
+
 func main() {
+	config := setup()
+	log.Printf("Main started")
+	presentation.NewHandler(data.NewMongoQuestionRepository(
+		config.MongoConnection,
+		config.DBName,
+		"questions"), config.Port)
+}
+
+func setup() Config {
 	portEnv := os.Getenv("PORT")
 	if portEnv == "" {
 		log.Fatal("$PORT must be set")
@@ -27,9 +42,9 @@ func main() {
 	if mongoDBName == "" {
 		log.Fatal("$MONGO_DB_NAME must be set")
 	}
-	log.Printf("Main started")
-	presentation.NewHandler(data.NewMongoQuestionRepository(
-		mongoUri,
-		mongoDBName,
-		"questions"), port)
+	return Config{
+		Port:port,
+		MongoConnection:mongoUri,
+		DBName:mongoDBName,
+	}
 }

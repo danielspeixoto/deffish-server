@@ -89,7 +89,7 @@ func TestPresenter_OnQuestionReceived(t *testing.T) {
 			status , http.StatusOK)
 	}
 
-	expected := `{"status":"ok","data":[{"id":"1","pdf":"AQA=","answer":0,"choices":null,"tags":null},{"id":"2","pdf":"AAE=","answer":1,"choices":null,"tags":null}]}`
+	expected := `{"status":"ok","data":[{"id":"1","pdf":"AQA=","answer":0,"choices":[],"tags":[]},{"id":"2","pdf":"AAE=","answer":1,"choices":[],"tags":[]}]}`
 	body := strings.TrimRight(recorder.Body.String(), "\n")
 	if body != expected {
 		t.Errorf("handler returned unexpected body:\n got  %v want %v",
