@@ -15,7 +15,9 @@ type Handler struct {
 func NewHandler(repo gateway.IQuestionRepository, port int) {
 	handler := Handler{
 		repo,
+
 	}
+	handler.handle("/", status)
 	handler.handle("/status", status)
 	handler.handle("/questions/", upload)
 	handler.handle("/questions/random", random)
