@@ -5,6 +5,7 @@ import (
 	"deffish-server/src/domain/boundary"
 	"encoding/json"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"strconv"
 )
@@ -21,7 +22,10 @@ func (ctrl Controller) Upload(request *http.Request) {
 
 	var question Question
 	err = json.Unmarshal(bodyBytes, &question)
-	if err != nil { panic(err) }
+	if err != nil {
+		log.Printf("request body of failed json parsing: %s", request.Body)
+		panic(err)
+	}
 
 	ctrl.UploadQuestionUseCase.Upload(
 		fromRequestToQuestion(question))
@@ -36,12 +40,12 @@ func (ctrl Controller) Random(request *http.Request) {
 
 	amountParam, ok := params["amount"]
 	if !ok || len(amountParam[0]) < 1 {
-		panic("Url param 'amount' is missing")
+		amountParam = []string{"2"}
 	}
 
 	tagsParam, ok := params["tags[]"]
 	if !ok || len(tagsParam[0]) < 1 {
-		panic("Url param 'tags' is missing")
+		tagsParam = []string{}
 	}
 
 	var tags []domain.Tag

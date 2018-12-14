@@ -3,7 +3,7 @@ package helpers
 import "deffish-server/src/domain"
 
 func TagsToStringArray(tags []domain.Tag) []string {
-	var tagsStr []string
+	var tagsStr = []string{}
 	for _, element := range tags {
 		tagsStr = append(tagsStr, element.Name)
 	}

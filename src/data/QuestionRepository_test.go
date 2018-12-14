@@ -18,6 +18,8 @@ func TestMain(m *testing.M) {
 	err := repo.Drop()
 	if err != nil { panic(err) }
 	m.Run()
+	err = repo.Drop()
+	if err != nil { panic(err) }
 }
 
 func TestInsertedItemsCanBeRetrieved(t *testing.T) {
@@ -113,5 +115,30 @@ func TestRandomQuestions(t *testing.T) {
 		}
 	}
 }
+
+func TestMongoQuestionRepository_RandomNoTags(t *testing.T) {
+	for i := 0; i < 5; i++ {
+		question := domain.Question{
+			PDF: domain.PDF{
+				Content: []byte{1},
+			},
+			Answer: i,
+			Tags: [] domain.Tag{
+				{strconv.Itoa(i)},
+			},
+		}
+		_, err := repo.Insert(question)
+		if err != nil { t.Fatal(err) }
+	}
+
+	questions, err := repo.Random(100, []domain.Tag{})
+	if err != nil { t.Fatal(err) }
+
+	if len(questions) != 5 {
+		t.Errorf("Random should return all questions. " +
+			"Expected: %v, Got: %v", 5, len(questions))
+	}
+}
+
 
 

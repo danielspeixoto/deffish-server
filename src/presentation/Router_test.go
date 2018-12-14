@@ -18,9 +18,9 @@ func TestRouter_Status(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	repo := mock_gateway.NewMockIQuestionRepository(ctrl)
-	go NewHandler(repo, 5000)
+	go NewHandler(repo, 4000)
 
-	resp, err := http.Get("http://localhost:5000/status")
+	resp, err := http.Get("http://localhost:4000/status")
 	if err != nil { panic(err) }
 	body, err := ioutil.ReadAll(resp.Body)
 
@@ -37,7 +37,7 @@ func TestRouter_Upload(t *testing.T) {
 	defer ctrl.Finish()
 
 	repo := mock_gateway.NewMockIQuestionRepository(ctrl)
-	go NewHandler(repo, 5000)
+	go NewHandler(repo, 4000)
 
 	repo.EXPECT().
 		Insert(gomock.Eq(question))
@@ -54,7 +54,7 @@ func TestRouter_Upload(t *testing.T) {
 	})
 	if err != nil { panic(err) }
 	resp, err := http.Post(
-		"http://localhost:5000/questions/",
+		"http://localhost:4000/questions/",
 		"application/json",
 		bytes.NewBuffer(body))
 
@@ -84,7 +84,7 @@ func TestRouter_UploadInvalid(t *testing.T) {
 	defer ctrl.Finish()
 
 	repo := mock_gateway.NewMockIQuestionRepository(ctrl)
-	go NewHandler(repo, 5000)
+	go NewHandler(repo, 4000)
 
 	body, err := json.Marshal(map[string]interface{}{
 		"pdf":  []byte {1, 0},
@@ -98,7 +98,7 @@ func TestRouter_UploadInvalid(t *testing.T) {
 	})
 	if err != nil { panic(err) }
 	resp, err := http.Post(
-		"http://localhost:5000/questions/",
+		"http://localhost:4000/questions/",
 		"application/json",
 		bytes.NewBuffer(body))
 
@@ -128,7 +128,7 @@ func TestRouter_UploadError(t *testing.T) {
 	defer ctrl.Finish()
 
 	repo := mock_gateway.NewMockIQuestionRepository(ctrl)
-	go NewHandler(repo, 5000)
+	go NewHandler(repo, 4000)
 
 	repo.EXPECT().
 		Insert(gomock.Eq(question)).
@@ -146,7 +146,7 @@ func TestRouter_UploadError(t *testing.T) {
 	})
 	if err != nil { panic(err) }
 	resp, err := http.Post(
-		"http://localhost:5000/questions/",
+		"http://localhost:4000/questions/",
 		"application/json",
 		bytes.NewBuffer(body))
 
@@ -185,9 +185,9 @@ func TestRouter_Random(t *testing.T) {
 				Id: domain.Id{Value: "2"},
 			},
 	},nil)
-	go NewHandler(repo, 5000)
+	go NewHandler(repo, 4000)
 
-	resp, err := http.Get("http://localhost:5000/questions/random?amount=2&tags[]=enem&tags[]=matematica")
+	resp, err := http.Get("http://localhost:4000/questions/random?amount=2&tags[]=enem&tags[]=matematica")
 	if err != nil { panic(err) }
 	body, err := ioutil.ReadAll(resp.Body)
 

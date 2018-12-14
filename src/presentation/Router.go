@@ -18,8 +18,8 @@ func NewHandler(repo gateway.IQuestionRepository, port int) {
 
 	}
 	http.HandleFunc("/status", handler.controllerCall(status))
+	http.HandleFunc("/questions/", handler.controllerCall(upload))
 	http.HandleFunc("/questions/random", handler.controllerCall(random))
-	http.HandleFunc("questions/", handler.controllerCall(upload))
 
 	log.Fatal(http.ListenAndServe(":" + strconv.Itoa(port), nil))
 }

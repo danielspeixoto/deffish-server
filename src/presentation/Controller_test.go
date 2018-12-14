@@ -70,3 +70,21 @@ func TestController_Random(t *testing.T) {
 
 	controller.Random(request)
 }
+
+func TestController_RandomEmptyParams(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+
+	useCase := mock_boundary.NewMockIRandomQuestionUseCase(mockCtrl)
+
+	controller := Controller{RandomQuestionUseCase: useCase}
+
+	useCase.EXPECT().
+		Random(2, gomock.Any())
+
+	request, err := http.NewRequest(
+		"GET", "/random", nil)
+	if err != nil { panic(err) }
+
+	controller.Random(request)
+}

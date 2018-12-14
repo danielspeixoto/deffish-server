@@ -73,18 +73,25 @@ func (repo MongoQuestionRepository) Find() ([]domain.Question, error) {
 
 func (repo MongoQuestionRepository) Random(amount int, tags []domain.Tag) ([]domain.Question, error) {
 	ctx, _ := context.WithTimeout(context.Background(), 10 * time.Second)
-	cursor, err := repo.questions.Aggregate(ctx,
-		bson.D{
-			{"", bson.M{
-				"$match": bson.M{
-					"tags": bson.M{
-						"$all": helpers.TagsToStringArray(tags),
-					},
+
+	agg := bson.D{
+		{"", bson.M{
+			"$match": bson.M{
+				"tags": bson.M{
+					"$all": helpers.TagsToStringArray(tags),
 				},
-			}},
+			},
+		}},
+		{"", bson.M{ "$sample": bson.M{"size": amount} }},
+	}
+
+	if len(tags) == 0 {
+		agg = bson.D{
 			{"", bson.M{ "$sample": bson.M{"size": amount} }},
-		},
-	)
+		}
+	}
+
+	cursor, err := repo.questions.Aggregate(ctx, agg)
 	if err != nil { return nil, err }
 	return fromCursorToQuestions(cursor)
 }
