@@ -14,7 +14,7 @@ type Presenter struct {
 func (presenter Presenter) OnQuestionReceived(questions []domain.Question) {
 	presenter.Writer.WriteHeader(http.StatusOK)
 
-	var jsonQuestions = []Question{}
+	jsonQuestions := make([]Question, 0)
 	for _, element := range questions {
 		jsonQuestions = append(jsonQuestions, fromQuestionToJson(element))
 	}

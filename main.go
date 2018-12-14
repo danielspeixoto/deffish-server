@@ -20,9 +20,16 @@ func main() {
 		panic(err)
 	}
 	mongoUri := os.Getenv("MONGO_CONNECTION")
+	if mongoUri == "" {
+		log.Fatal("$MONGO_CONNECTION must be set")
+	}
+	mongoDBName := os.Getenv("MONGO_DB_NAME")
+	if mongoDBName == "" {
+		log.Fatal("$MONGO_DB_NAME must be set")
+	}
 	log.Printf("Main started")
 	presentation.NewHandler(data.NewMongoQuestionRepository(
 		mongoUri,
-		"deffish",
+		mongoDBName,
 		"questions"), port)
 }
