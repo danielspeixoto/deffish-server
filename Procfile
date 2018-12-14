@@ -1,1 +1,1 @@
-web: ls bin && ./deffish-server
+web: bin/deffish-server
