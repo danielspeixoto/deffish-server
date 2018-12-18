@@ -11,7 +11,16 @@ type Presenter struct {
 	Writer http.ResponseWriter
 }
 
-func (presenter Presenter) OnQuestionReceived(questions []domain.Question) {
+func (presenter Presenter) OnQuestionReceived(question domain.Question) {
+	presenter.Writer.WriteHeader(http.StatusOK)
+
+	err := json.NewEncoder(presenter.Writer).Encode(Response{Status: "ok",
+		Data: fromQuestionToJson(question)})
+
+	if err != nil { panic(err) }
+}
+
+func (presenter Presenter) OnQuestionsReceived(questions []domain.Question) {
 	presenter.Writer.WriteHeader(http.StatusOK)
 
 	jsonQuestions := make([]Question, 0)
@@ -52,3 +61,4 @@ func (presenter Presenter) OnError(error) {
 var _ boundary.IUploadQuestionPresenter = (*Presenter)(nil)
 var _ boundary.IRandomQuestionPresenter = (*Presenter)(nil)
 var _ boundary.IStatusPresenter = (*Presenter)(nil)
+var _ boundary.IQuestionByIdPresenter = (*Presenter)(nil)

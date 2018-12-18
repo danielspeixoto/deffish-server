@@ -168,7 +168,7 @@ func TestRouter(t *testing.T) {
 				},
 			}, nil)
 
-		resp, err := http.Get("http://localhost:" + portStr + "/questions/random?amount=2&tags[]=enem&tags[]=matematica")
+		resp, err := http.Get("http://localhost:" + portStr + "/questions?amount=2&tags[]=enem&tags[]=matematica")
 		if err != nil { panic(err) }
 		body, err := ioutil.ReadAll(resp.Body)
 
@@ -181,6 +181,29 @@ func TestRouter(t *testing.T) {
 
 		arr := response.Data.([]interface{})
 		if arr[0].(map[string]interface{})["id"] != "1" {
+			t.Fail()
+		}
+	})
+	t.Run("Id", func(t *testing.T) {
+		id := domain.Id{Value: "2"}
+
+		repo.EXPECT().
+			Id(gomock.Eq(domain.Id{Value: "2"})).
+			Return(domain.Question{Id: id}, nil)
+
+		resp, err := http.Get("http://localhost:" + portStr + "/questions/2")
+		if err != nil { panic(err) }
+		body, err := ioutil.ReadAll(resp.Body)
+
+		var response Response
+		err = json.Unmarshal(body, &response)
+		if err != nil { panic(err) }
+		if response.Status != "ok" {
+			t.Fail()
+		}
+
+		question := response.Data.(interface{})
+		if question.(map[string]interface{})["id"] != "2" {
 			t.Fail()
 		}
 	})

@@ -140,5 +140,22 @@ func TestMongoQuestionRepository_RandomNoTags(t *testing.T) {
 	}
 }
 
+func TestMongoQuestionRepository_CanRetrieveUsingId(t *testing.T) {
+	question := domain.Question{
+		PDF: domain.PDF{
+			Content: []byte{1},
+	},
+		Answer: 1,
+	}
+	id, err := repo.Insert(question)
+	if err != nil { t.Fatal(err) }
+	result, err := repo.Id(id)
+	if err != nil { t.Fatal(err) }
+
+	if result.Answer != 1 {
+		t.Errorf("Differs")
+	}
+}
+
 
 

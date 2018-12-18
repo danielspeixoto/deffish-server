@@ -39,7 +39,7 @@ func TestRandom(t *testing.T) {
 		}, nil)
 
 	presenter.EXPECT().
-		OnQuestionReceived([]domain.Question{
+		OnQuestionsReceived([]domain.Question{
 		{
 			Id: domain.Id{Value: "1"},
 			PDF: domain.PDF{Content: []byte{1}},
@@ -101,7 +101,7 @@ func TestRandomSetsMaximumValue(t *testing.T) {
 		Return([]domain.Question{}, nil)
 
 	presenter.EXPECT().
-		OnQuestionReceived(gomock.Any())
+		OnQuestionsReceived(gomock.Any())
 
 	useCase.Random(500, []domain.Tag{{"tatu"}, {"tuta"},})
 }

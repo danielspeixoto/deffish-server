@@ -9,6 +9,6 @@ type IRandomQuestionUseCase interface {
 }
 
 type IRandomQuestionPresenter interface {
-	OnQuestionReceived([]domain.Question)
+	OnQuestionsReceived([]domain.Question)
 	OnError(error)
 }

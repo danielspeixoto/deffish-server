@@ -49,7 +49,7 @@ func (repo MongoQuestionRepository) Insert(question domain.Question) (domain.Id,
 		toMongoQuestion(question))
 	if err != nil { return domain.Id{}, err }
 	id := domain.Id{
-		Value: res.InsertedID.(primitive.ObjectID).String(),
+		Value: res.InsertedID.(primitive.ObjectID).Hex(),
 	}
 	log.Printf("question with id %s inserted", id.Value)
 	return id,  nil
@@ -69,6 +69,21 @@ func (repo MongoQuestionRepository) Find() ([]domain.Question, error) {
 	cursor, err := repo.questions.Find(ctx, nil)
 	if err != nil { return nil, err }
 	return fromCursorToQuestions(cursor)
+}
+
+func (repo MongoQuestionRepository) Id(id domain.Id) (domain.Question, error) {
+	ctx, _ := context.WithTimeout(context.Background(), 1 * time.Second)
+
+	objId, err := primitive.ObjectIDFromHex(id.Value)
+	if err != nil { return domain.Question{}, err }
+
+	res := repo.questions.FindOne(ctx,
+		bson.M{"_id": objId},
+	)
+	var mongoQuestion MongoQuestion
+	err = res.Decode(&mongoQuestion)
+	if err != nil { return domain.Question{}, err }
+	return fromMongoToQuestion(mongoQuestion), nil
 }
 
 func (repo MongoQuestionRepository) Random(amount int, tags []domain.Tag) ([]domain.Question, error) {
@@ -125,7 +140,7 @@ func fromMongoToQuestion(doc MongoQuestion) domain.Question {
 	}
 	return domain.Question{
 		Id: domain.Id {
-			Value: doc.Id.String(),
+			Value: doc.Id.Hex(),
 		},
 		PDF: domain.PDF{
 			Content: doc.PDF,
@@ -136,7 +151,7 @@ func fromMongoToQuestion(doc MongoQuestion) domain.Question {
 	}
 }
 
-func toMongoQuestion(question domain.Question) MongoQuestion{
+func toMongoQuestion(question domain.Question) MongoQuestion {
 	return MongoQuestion{
 		PDF: question.PDF.Content,
 		Answer: question.Answer,

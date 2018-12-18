@@ -25,6 +25,6 @@ func (useCase RandomQuestionUseCase) Random(amount int, tags []domain.Tag) {
 		log.Print(err)
 		useCase.Presenter.OnError(err)
 	} else {
-		useCase.Presenter.OnQuestionReceived(questions)
+		useCase.Presenter.OnQuestionsReceived(questions)
 	}
 }

@@ -4,6 +4,7 @@ import (
 	"deffish-server/src/domain"
 	"deffish-server/src/domain/boundary"
 	"encoding/json"
+	"github.com/gin-gonic/gin"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -14,6 +15,7 @@ type Controller struct {
 	UploadQuestionUseCase boundary.IUploadQuestionUseCase
 	RandomQuestionUseCase boundary.IRandomQuestionUseCase
 	StatusUseCase         boundary.IStatusUseCase
+	GetById boundary.IQuestionByIdUseCase
 }
 
 func (ctrl Controller) Upload(request *http.Request) {
@@ -63,3 +65,7 @@ func (ctrl Controller) Random(request *http.Request) {
 	ctrl.RandomQuestionUseCase.Random(amount, tags)
 }
 
+func (ctrl Controller) QuestionById(c *gin.Context)  {
+	id := c.Param("id")
+	ctrl.GetById.Id(domain.Id{Value: id})
+}

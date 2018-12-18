@@ -1,10 +1,10 @@
 package presentation
 
+import "C"
 import (
 	"deffish-server/src/domain/gateway"
 	"deffish-server/src/domain/usecase"
-	"log"
-	"net/http"
+	"github.com/gin-gonic/gin"
 	"strconv"
 )
 
@@ -15,35 +15,40 @@ type Handler struct {
 func NewHandler(repo gateway.IQuestionRepository, port int) {
 	handler := Handler{
 		repo,
-
 	}
-	handler.handle("/", status)
-	handler.handle("/status", status)
-	handler.handle("/questions/", upload)
-	handler.handle("/questions/random", random)
+	router := gin.Default()
 
-	log.Fatal(http.ListenAndServe(":" + strconv.Itoa(port), nil))
+	router.GET("/", handler.handle(status))
+	router.GET("/status", handler.handle(status))
+	router.POST("/questions", handler.handle(upload))
+	router.GET("/questions", handler.handle(random))
+	router.GET("/questions/:id", handler.handle(questionById))
+
+	err := router.Run(":" + strconv.Itoa(port))
+	if err != nil {
+		panic(err)
+	}
 }
 
-func (handler Handler) handle(pattern string, callback func(Controller, *http.Request)) {
-	http.HandleFunc(pattern,
-		func(writer http.ResponseWriter, request *http.Request) {
-
-			log.Printf("Request at %s from IP: %s", request.URL.Path, request.RemoteAddr)
-
-			ctrl := controller(Presenter{Writer: writer}, handler.Repo)
-			callback(ctrl, request)
-		})
+func (h Handler) handle(callback func(Controller, *gin.Context)) func(c *gin.Context){
+	return func(c *gin.Context) {
+		ctrl := controller(Presenter{Writer: c.Writer}, h.Repo)
+		callback(ctrl, c)
+	}
 }
 
 func controller(presenter Presenter, repo gateway.IQuestionRepository) Controller {
 	uploadQuestion := usecase.UploadQuestionUseCase{Repo: repo, Presenter: presenter}
 	status := usecase.StatusUseCase{Repo: repo, Presenter: presenter}
 	random := usecase.RandomQuestionUseCase{Repo:repo, Presenter:presenter, MaxQuestions:10}
+	questionById := usecase.QuestionByIdUseCase{Repo:repo, Presenter:presenter}
 	return Controller{UploadQuestionUseCase: uploadQuestion,
-		StatusUseCase:status, RandomQuestionUseCase:random}
+		StatusUseCase:status, RandomQuestionUseCase:random,
+		GetById: questionById,
+	}
 }
 
-func upload(c Controller, r *http.Request) { c.Upload(r) }
-func status(c Controller, r *http.Request) { c.Status(r) }
-func random(c Controller, r *http.Request) { c.Random(r) }
+func upload(ctrl Controller, ctx *gin.Context)       { ctrl.Upload(ctx.Request) }
+func status(ctrl Controller, ctx *gin.Context)       { ctrl.Status(ctx.Request) }
+func random(ctrl Controller, ctx *gin.Context)       { ctrl.Random(ctx.Request) }
+func questionById(ctrl Controller, ctx *gin.Context) { ctrl.QuestionById(ctx) }
