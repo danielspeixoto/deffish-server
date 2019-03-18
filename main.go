@@ -1,8 +1,8 @@
 package main
 
 import (
-	"deffish-server/src/data"
-	"deffish-server/src/presentation"
+	"deffish-server/src/question"
+	"deffish-server/src/routing"
 	"fmt"
 	"log"
 	"os"
@@ -18,10 +18,13 @@ type Config struct {
 func main() {
 	config := setup()
 	log.Printf("Main started")
-	presentation.NewHandler(data.NewMongoQuestionRepository(
-		config.MongoConnection,
-		config.DBName,
-		"questions"), config.Port)
+
+	routing.NewRouter(
+		question.NewRouterDefaults(
+			config.MongoConnection,
+			config.DBName,
+			"questions"),
+		config.Port)
 }
 
 func setup() Config {

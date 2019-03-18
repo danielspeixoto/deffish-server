@@ -14,5 +14,4 @@
 *.lock
 vendor
 .idea
-mock
 main
