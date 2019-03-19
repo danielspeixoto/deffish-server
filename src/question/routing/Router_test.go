@@ -1,9 +1,9 @@
-package question
+package routing
 
 import (
 	"bytes"
 	"deffish-server/src/aggregates"
-	"deffish-server/src/question/domain"
+	"deffish-server/src/question"
 	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"github.com/golang/mock/gomock"
@@ -15,12 +15,12 @@ import (
 	"testing"
 )
 
-func runServer(repo domain.IRepository, port string) {
+func runServer(repo question.IRepository, port string) {
 	questions := NewRouter(
 		repo,
 	)
 	router := gin.Default()
-	questions.Route(router)
+	questions.Route(router.Group("/questions"))
 	err := router.Run(":" + port)
 	if err != nil {
 		panic(err)
@@ -31,7 +31,7 @@ func TestRouter(t *testing.T) {
 	port := "5001"
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	repo := domain.NewMockIRepository(ctrl)
+	repo := question.NewMockIRepository(ctrl)
 	go runServer(repo, port)
 
 	question := aggregates.Question{

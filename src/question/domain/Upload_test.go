@@ -2,12 +2,13 @@ package domain
 
 import (
 	"deffish-server/src/aggregates"
+	"deffish-server/src/question"
 	"github.com/golang/mock/gomock"
 	"github.com/pkg/errors"
 	"testing"
 )
 
-var question = aggregates.Question{
+var q = aggregates.Question{
 	PDF: aggregates.PDF{
 		Content: []byte {1, 0},
 	},
@@ -25,8 +26,8 @@ func TestUploadQuestionSuccessful(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	repo := NewMockIRepository(ctrl)
-	presenter := NewMockIUploadPresenter(ctrl)
+	repo := question.NewMockIRepository(ctrl)
+	presenter := question.NewMockIUploadPresenter(ctrl)
 
 	useCase := Upload{
 		Repo: repo,
@@ -34,19 +35,19 @@ func TestUploadQuestionSuccessful(t *testing.T) {
 	}
 
 	repo.EXPECT().
-		Insert(gomock.Eq(question))
+		Insert(gomock.Eq(q))
 	presenter.EXPECT().
 		OnUploaded()
 
-	useCase.Upload(question)
+	useCase.Upload(q)
 }
 
 func TestUploadQuestionError(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	repo := NewMockIRepository(ctrl)
-	presenter := NewMockIUploadPresenter(ctrl)
+	repo := question.NewMockIRepository(ctrl)
+	presenter := question.NewMockIUploadPresenter(ctrl)
 
 	useCase := Upload{
 		Repo: repo,
@@ -54,11 +55,11 @@ func TestUploadQuestionError(t *testing.T) {
 	}
 
 	repo.EXPECT().
-		Insert(gomock.Eq(question)).
+		Insert(gomock.Eq(q)).
 		Return(
 			aggregates.Id{},
 			errors.New(""))
 	presenter.EXPECT().OnError(gomock.Any())
 
-	useCase.Upload(question)
+	useCase.Upload(q)
 }

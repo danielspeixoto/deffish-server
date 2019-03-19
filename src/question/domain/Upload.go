@@ -2,15 +2,16 @@ package domain
 
 import (
 	"deffish-server/src/aggregates"
+	"deffish-server/src/question"
 	"errors"
 	"log"
 )
 
 type Upload struct {
-	Repo IRepository
-	Presenter IUploadPresenter
+	Repo question.IRepository
+	Presenter question.IUploadPresenter
 }
-var _ IUploadUseCase = (*Upload)(nil)
+var _ question.IUploadUseCase = (*Upload)(nil)
 
 func (useCase Upload) Upload(question aggregates.Question) {
 	_, err := useCase.Repo.Insert(question)

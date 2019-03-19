@@ -2,6 +2,7 @@ package domain
 
 import (
 	"deffish-server/src/aggregates"
+	"deffish-server/src/question"
 	"github.com/golang/mock/gomock"
 	"testing"
 )
@@ -10,8 +11,8 @@ func TestQuestionByIdUseCase_Id(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	presenter := NewMockIByIdPresenter(ctrl)
-	repo := NewMockIRepository(ctrl)
+	presenter := question.NewMockIByIdPresenter(ctrl)
+	repo := question.NewMockIRepository(ctrl)
 
 	useCase := ById{
 		repo,

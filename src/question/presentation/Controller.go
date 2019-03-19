@@ -2,8 +2,7 @@ package presentation
 
 import (
 	"deffish-server/src/aggregates"
-	"deffish-server/src/question/domain"
-	"deffish-server/src/status"
+	"deffish-server/src/question"
 	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"io/ioutil"
@@ -13,10 +12,9 @@ import (
 )
 
 type Controller struct {
-	UploadUseCase domain.IUploadUseCase
-	RandomUseCase domain.IRandomUseCase
-	StatusUseCase         status.IInfoUseCase
-	GetById domain.IByIdUseCase
+	UploadUseCase question.IUploadUseCase
+	RandomUseCase question.IRandomUseCase
+	GetById question.IByIdUseCase
 }
 
 func (ctrl Controller) Upload(request *http.Request) {
@@ -32,10 +30,6 @@ func (ctrl Controller) Upload(request *http.Request) {
 
 	ctrl.UploadUseCase.Upload(
 		fromRequestToQuestion(question))
-}
-
-func (ctrl Controller) Status(request *http.Request) {
-	ctrl.StatusUseCase.Info()
 }
 
 func (ctrl Controller) Random(request *http.Request) {

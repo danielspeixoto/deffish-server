@@ -2,16 +2,17 @@ package domain
 
 import (
 	"deffish-server/src/aggregates"
+	"deffish-server/src/question"
 	"log"
 )
 
 type Random struct {
-	Repo IRepository
-	Presenter IRandomPresenter
+	Repo question.IRepository
+	Presenter question.IRandomPresenter
 	MaxQuestions int
 }
 
-var _ IRandomUseCase = (*Random)(nil)
+var _ question.IRandomUseCase = (*Random)(nil)
 
 func (useCase Random) Random(amount int, tags []aggregates.Tag) {
 	if amount > useCase.MaxQuestions {

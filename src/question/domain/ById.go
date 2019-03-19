@@ -2,12 +2,13 @@ package domain
 
 import (
 	"deffish-server/src/aggregates"
+	"deffish-server/src/question"
 	"github.com/pkg/errors"
 )
 
 type ById struct {
-	Repo IRepository
-	Presenter IByIdPresenter
+	Repo question.IRepository
+	Presenter question.IByIdPresenter
 }
 
 func (useCase ById) Id(id aggregates.Id) {
@@ -19,5 +20,5 @@ func (useCase ById) Id(id aggregates.Id) {
 	}
 }
 
-var _ IByIdUseCase = (*ById)(nil)
+var _ question.IByIdUseCase = (*ById)(nil)
 

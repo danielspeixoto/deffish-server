@@ -2,8 +2,7 @@ package presentation
 
 import (
 	"deffish-server/src/aggregates"
-	"deffish-server/src/question/domain"
-	"deffish-server/src/status"
+	"deffish-server/src/question"
 	"encoding/json"
 	"net/http"
 )
@@ -33,12 +32,6 @@ func (presenter Presenter) OnListReceived(questions []aggregates.Question) {
 	if err != nil { panic(err) }
 }
 
-func (presenter Presenter) Status(status string) {
-	presenter.Writer.WriteHeader(http.StatusOK)
-	err := json.NewEncoder(presenter.Writer).Encode(aggregates.Response{Status: status})
-	if err != nil { panic(err) }
-}
-
 func (presenter Presenter) OnUploaded() {
 	presenter.Writer.WriteHeader(http.StatusCreated)
 	err := json.NewEncoder(presenter.Writer).Encode(aggregates.Response{Status: "ok"})
@@ -53,7 +46,6 @@ func (presenter Presenter) OnError(error) {
 
 
 
-var _ domain.IUploadPresenter = (*Presenter)(nil)
-var _ domain.IRandomPresenter = (*Presenter)(nil)
-var _ status.IPresenter = (*Presenter)(nil)
-var _ domain.IByIdPresenter = (*Presenter)(nil)
+var _ question.IUploadPresenter = (*Presenter)(nil)
+var _ question.IRandomPresenter = (*Presenter)(nil)
+var _ question.IByIdPresenter = (*Presenter)(nil)

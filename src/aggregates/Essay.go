@@ -4,6 +4,6 @@ package aggregates
 type Essay struct {
 	Id
 	Title
-	Content
+	Text
 	Topic Id
 }

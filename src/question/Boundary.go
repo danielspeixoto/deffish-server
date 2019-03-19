@@ -1,6 +1,8 @@
-package domain
+package question
 
-import "deffish-server/src/aggregates"
+import (
+	"deffish-server/src/aggregates"
+)
 
 type IRepository interface {
 	Insert(aggregates.Question) (aggregates.Id, error)

@@ -4,7 +4,7 @@ import (
 	"context"
 	"deffish-server/src/aggregates"
 	"deffish-server/src/helpers"
-	"deffish-server/src/question/domain"
+	"deffish-server/src/question"
 	"github.com/mongodb/mongo-go-driver/bson"
 	"github.com/mongodb/mongo-go-driver/bson/primitive"
 	"github.com/mongodb/mongo-go-driver/mongo"
@@ -16,7 +16,7 @@ type MongoRepository struct {
 	questions *mongo.Collection
 }
 
-var _ domain.IRepository = (*MongoRepository)(nil)
+var _ question.IRepository = (*MongoRepository)(nil)
 
 type MongoQuestion struct {
 	Id primitive.ObjectID `bson:"_id,omitempty"`
@@ -26,20 +26,8 @@ type MongoQuestion struct {
 	Tags []string `bson:"tags"`
 }
 
-func NewMongoRepository(
-	uri string,
-	database string,
-	questionsCollection string) *MongoRepository {
-	ctx, _ := context.WithTimeout(context.Background(), 1 * time.Second)
-	client, err := mongo.Connect(ctx, uri)
-	if err != nil {
-		panic(err)
-	}
-	log.Printf("Connection to mongo successfull")
-	db := client.Database(database)
-	return &MongoRepository{
-		db.Collection(questionsCollection),
-	}
+func NewMongoRepository(questions *mongo.Collection) *MongoRepository {
+	return &MongoRepository{questions}
 }
 
 func (repo MongoRepository) Insert(question aggregates.Question) (aggregates.Id, error) {

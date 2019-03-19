@@ -8,7 +8,7 @@ type Title struct {
 	Value string
 }
 
-type Content struct {
+type Text struct {
 	Value string
 }
 

@@ -2,6 +2,7 @@ package domain
 
 import (
 	"deffish-server/src/aggregates"
+	"deffish-server/src/question"
 	"github.com/golang/mock/gomock"
 	"github.com/pkg/errors"
 	"testing"
@@ -11,8 +12,8 @@ func TestRandom(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	repo := NewMockIRepository(ctrl)
-	presenter := NewMockIRandomPresenter(ctrl)
+	repo := question.NewMockIRepository(ctrl)
+	presenter := question.NewMockIRandomPresenter(ctrl)
 
 	useCase := Random{
 		Repo: repo,
@@ -57,8 +58,8 @@ func TestRandomOnError(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	repo := NewMockIRepository(ctrl)
-	presenter := NewMockIRandomPresenter(ctrl)
+	repo := question.NewMockIRepository(ctrl)
+	presenter := question.NewMockIRandomPresenter(ctrl)
 
 	useCase := Random{
 		Repo: repo,
@@ -84,8 +85,8 @@ func TestRandomSetsMaximumValue(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	repo := NewMockIRepository(ctrl)
-	presenter := NewMockIRandomPresenter(ctrl)
+	repo := question.NewMockIRepository(ctrl)
+	presenter := question.NewMockIRandomPresenter(ctrl)
 
 	useCase := Random{
 		Repo: repo,

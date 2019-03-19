@@ -3,14 +3,14 @@ package presentation
 import (
 	"bytes"
 	"deffish-server/src/aggregates"
-	"deffish-server/src/question/domain"
+	"deffish-server/src/question"
 	"encoding/json"
 	"github.com/golang/mock/gomock"
 	"net/http"
 	"testing"
 )
 
-var question = aggregates.Question{
+var q = aggregates.Question{
 	PDF: aggregates.PDF{
 		Content: []byte {1, 0},
 	},
@@ -28,12 +28,12 @@ func TestController_Upload(t *testing.T) {
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()
 
-	uploadQuestion := domain.NewMockIUploadUseCase(mockCtrl)
+	uploadQuestion := question.NewMockIUploadUseCase(mockCtrl)
 
 	controller := Controller{UploadUseCase: uploadQuestion}
 
 	uploadQuestion.EXPECT().
-		Upload(gomock.Eq(question))
+		Upload(gomock.Eq(q))
 
 	body, err := json.Marshal(map[string]interface{}{
 		"pdf":  []byte {1, 0},
@@ -57,7 +57,7 @@ func TestController_Random(t *testing.T) {
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()
 
-	useCase := domain.NewMockIRandomUseCase(mockCtrl)
+	useCase := question.NewMockIRandomUseCase(mockCtrl)
 
 	controller := Controller{RandomUseCase: useCase}
 
@@ -75,7 +75,7 @@ func TestController_RandomEmptyParams(t *testing.T) {
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()
 
-	useCase := domain.NewMockIRandomUseCase(mockCtrl)
+	useCase := question.NewMockIRandomUseCase(mockCtrl)
 
 	controller := Controller{RandomUseCase: useCase}
 
