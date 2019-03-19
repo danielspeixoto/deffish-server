@@ -1,11 +1,10 @@
 package main
 
 import (
-	"deffish-server/src/data"
-	questionData "deffish-server/src/question/data"
-	question "deffish-server/src/question/routing"
-	"deffish-server/src/routing"
-	status "deffish-server/src/status/routing"
+	"deffish-server/src/data/mongo"
+	"deffish-server/src/presentation"
+	"deffish-server/src/presentation/question"
+	"deffish-server/src/presentation/status"
 	"fmt"
 	"log"
 	"os"
@@ -22,16 +21,14 @@ func main() {
 	config := setup()
 	log.Printf("Main started")
 
-
-	repo := data.NewMongoRepository(
+	repo := mongo.NewRepository(
 		config.MongoConnection,
 		config.DBName,
-		"questions",
 	)
 
-	routing.NewRouter(
-		status.NewRouter(),
-		question.NewRouter(questionData.NewMongoRepository(repo.Questions)),
+	presentation.NewRouter(
+		status.Router{},
+		question.Router{Repo: repo.Questions},
 		config.Port)
 }
 
