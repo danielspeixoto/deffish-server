@@ -1,18 +1,19 @@
-package topic
+package essay
 
 import (
 	"deffish-server/src/aggregates"
+	"deffish-server/src/boundary/essay"
 	"errors"
 	"log"
 )
 
 type Upload struct {
-	Repo IRepository
-	Presenter IUploadPresenter
+	Repo essay.IRepository
+	Presenter essay.IUploadPresenter
 }
-var _ IUploadUseCase = (*Upload)(nil)
+var _ essay.IUploadUseCase = (*Upload)(nil)
 
-func (useCase Upload) Upload(question aggregates.Topic) {
+func (useCase Upload) Upload(question aggregates.Essay) {
 	_, err := useCase.Repo.Insert(question)
 	if err != nil {
 		log.Print(err)

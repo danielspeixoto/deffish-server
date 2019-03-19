@@ -7,6 +7,16 @@ type IRepository interface {
 	Id(id aggregates.Id) (aggregates.Essay, error)
 	FilterByTopic(aggregates.Id) ([]aggregates.Essay, error)
 	Comment(essayId aggregates.Id, comment aggregates.Comment) error
+	Random(amount int) ([]aggregates.Essay, error)
+}
+
+type IRandomUseCase interface {
+	Random(amount int)
+}
+
+type IRandomPresenter interface {
+	OnListReceived([]aggregates.Essay)
+	OnError(error)
 }
 
 type IByIdUseCase interface {
