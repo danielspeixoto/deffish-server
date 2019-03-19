@@ -7,6 +7,7 @@ var testRepo = NewRepository(
 "deffishtest")
 var topicRepo = testRepo.Topics
 var questionRepo = testRepo.Questions
+var essayRepo = testRepo.Essays
 
 
 func TestMain(m *testing.M) {
@@ -18,4 +19,5 @@ func TestMain(m *testing.M) {
 func dropAll() {
 	questionRepo.drop()
 	topicRepo.drop()
+	essayRepo.drop()
 }

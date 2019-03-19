@@ -11,7 +11,7 @@ import (
 
 
 func TestQuestionOneItem(t *testing.T) {
-	pdfBytes, err := ioutil.ReadFile("res/question.pdf")
+	pdfBytes, err := ioutil.ReadFile("../res/question.pdf")
 	if err != nil { t.Fatal(err) }
 	question := aggregates.Question{
 		PDF: aggregates.PDF{

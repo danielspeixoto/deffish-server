@@ -12,6 +12,7 @@ import (
 type Repository struct {
 	Questions *QuestionRepository
 	Topics *TopicRepository
+	Essays *EssayRepository
 }
 
 func NewRepository(
@@ -27,6 +28,7 @@ func NewRepository(
 	return &Repository{
 		NewQuestionRepository(db.Collection("questions")),
 		&TopicRepository{db.Collection("topics")},
+		&EssayRepository{db.Collection("essays")},
 	}
 }
 

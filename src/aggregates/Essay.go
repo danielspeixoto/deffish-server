@@ -6,4 +6,5 @@ type Essay struct {
 	Title
 	Text
 	Topic Id
+	Comments []Comment
 }
