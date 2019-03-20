@@ -31,7 +31,7 @@ func (ctrl Controller) Comment(c *gin.Context)  {
 	bodyBytes, err := ioutil.ReadAll(request.Body)
 	if err != nil { panic(err) }
 
-	var comment string
+	var comment Comment
 	err = json.Unmarshal(bodyBytes, &comment)
 	if err != nil {
 		log.Printf("request body of failed json parsing: %s", request.Body)
@@ -39,7 +39,7 @@ func (ctrl Controller) Comment(c *gin.Context)  {
 	}
 
 	id := c.Param("essayId")
-	ctrl.CommentUseCase.Comment(aggregates.Id{id}, aggregates.Comment{aggregates.Text{comment}})
+	ctrl.CommentUseCase.Comment(aggregates.Id{id}, comment)
 }
 
 

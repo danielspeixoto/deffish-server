@@ -1,8 +1,8 @@
 package status
 
 import (
-	"deffish-server/src/aggregates"
 	"deffish-server/src/domain/status"
+	"deffish-server/src/presentation/data"
 	"encoding/json"
 	"net/http"
 )
@@ -13,7 +13,7 @@ type Presenter struct {
 
 func (presenter Presenter) Status(status string) {
 	presenter.Writer.WriteHeader(http.StatusOK)
-	err := json.NewEncoder(presenter.Writer).Encode(aggregates.Response{Status: status})
+	err := json.NewEncoder(presenter.Writer).Encode(data.Response{Status: status})
 	if err != nil { panic(err) }
 }
 

@@ -30,6 +30,7 @@ func upload(ctrl Controller, ctx *gin.Context)       {
 func random(ctrl Controller, ctx *gin.Context)       {
 	ctrl.Random(ctx.Request)
 }
+
 func questionById(ctrl Controller, ctx *gin.Context) { ctrl.QuestionById(ctx) }
 
 func newControllerDefaults(presenter Presenter, repo question.IRepository) Controller {

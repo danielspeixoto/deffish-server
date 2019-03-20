@@ -27,7 +27,7 @@ describe("Inserts and manipulates questions", () => {
             "pdf": data,
             "answer": 1,
             "choices": ["A", "B", "C"],
-            "tags": ["0"]
+            "tags": ["0", "OTHER"]
         })
         expect(resp.status).toBe(201)
     })
@@ -40,4 +40,24 @@ describe("Inserts and manipulates questions", () => {
         expect(data.data[1]["answer"] +
             data.data[0]["answer"]).toBe(1)
     })
+
+    it("Retrieve random questions filtering by two tags", async () => {
+        const resp = await  axios.get(url + "?mode=random&amount=5&tags[]=0&tags[]=ENEM")
+        const data = resp.data
+        expect(resp.status).toBe(200)
+        expect(data.data.length).toBe(1)
+        expect(data.data[0]["answer"]).toBe(0)
+    })
+
+    it("Retrieve question using id", async () => {
+        const initialResp = await  axios.get(url + "?mode=random&amount=5&tags[]=0&tags[]=ENEM")
+        const initialData = initialResp.data
+        const id = initialData.data[0].id
+
+        const resp = await axios.get(url + "/" + id)
+        const data = resp.data
+        expect(resp.status).toBe(200)
+        expect(data.data.tags).toEqual(["0", "ENEM"])
+    })
+
 })

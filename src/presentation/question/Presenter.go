@@ -3,6 +3,7 @@ package question
 import (
 	"deffish-server/src/aggregates"
 	"deffish-server/src/domain/question"
+	"deffish-server/src/presentation/data"
 	"encoding/json"
 	"net/http"
 )
@@ -14,7 +15,7 @@ type Presenter struct {
 func (presenter Presenter) OnReceived(question aggregates.Question) {
 	presenter.Writer.WriteHeader(http.StatusOK)
 
-	err := json.NewEncoder(presenter.Writer).Encode(aggregates.Response{Status: "ok",
+	err := json.NewEncoder(presenter.Writer).Encode(data.Response{Status: "ok",
 		Data: fromQuestionToJson(question)})
 
 	if err != nil { panic(err) }
@@ -28,19 +29,19 @@ func (presenter Presenter) OnListReceived(questions []aggregates.Question) {
 		jsonQuestions = append(jsonQuestions, fromQuestionToJson(element))
 	}
 
-	err := json.NewEncoder(presenter.Writer).Encode(aggregates.Response{Status: "ok", Data: jsonQuestions})
+	err := json.NewEncoder(presenter.Writer).Encode(data.Response{Status: "ok", Data: jsonQuestions})
 	if err != nil { panic(err) }
 }
 
 func (presenter Presenter) OnUploaded() {
 	presenter.Writer.WriteHeader(http.StatusCreated)
-	err := json.NewEncoder(presenter.Writer).Encode(aggregates.Response{Status: "ok"})
+	err := json.NewEncoder(presenter.Writer).Encode(data.Response{Status: "ok"})
 	if err != nil { panic(err) }
 }
 
 func (presenter Presenter) OnError(error) {
 	presenter.Writer.WriteHeader(http.StatusInternalServerError)
-	err := json.NewEncoder(presenter.Writer).Encode(aggregates.Response{Status: "error"})
+	err := json.NewEncoder(presenter.Writer).Encode(data.Response{Status: "error"})
 	if err != nil { panic(err) }
 }
 

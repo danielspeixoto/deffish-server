@@ -47,7 +47,7 @@ type IFilterByTopicUseCase interface {
 }
 
 type ICommentPresenter interface {
-	OnSuccess()
+	OnUploaded()
 	OnError(error)
 }
 

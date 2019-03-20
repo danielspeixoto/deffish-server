@@ -69,7 +69,7 @@ func TestPresenter_OnTopicsReceived(t *testing.T) {
 			status , http.StatusOK)
 	}
 
-	result := &aggregates.Response{}
+	result := &data.Response{}
 	_ = json.Unmarshal(recorder.Body.Bytes(), result)
 
 	if result.Data.([]interface{})[0].(map[string]interface{})["title"] != example.Title.Value ||
@@ -89,7 +89,7 @@ func TestPresenter_OnTopicReceived(t *testing.T) {
 			status , http.StatusOK)
 	}
 
-	result := &aggregates.Response{}
+	result := &data.Response{}
 	_ = json.Unmarshal(recorder.Body.Bytes(), result)
 
 	if result.Data.(interface{}).(map[string]interface{})["title"] != example.Title.Value {

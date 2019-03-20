@@ -8,7 +8,7 @@ import (
 type Router struct {}
 
 func (handler Router) Route(router *gin.RouterGroup) {
-	router.POST("/", handler.handle(info))
+	router.GET("/", handler.handle(info))
 }
 
 func (handler Router) handle(callback func(Controller, *gin.Context)) func(c *gin.Context){
@@ -19,7 +19,9 @@ func (handler Router) handle(callback func(Controller, *gin.Context)) func(c *gi
 	}
 }
 
-func info(ctrl Controller, ctx *gin.Context)       { ctrl.Status(ctx.Request) }
+func info(ctrl Controller, ctx *gin.Context)       {
+	ctrl.Status(ctx.Request)
+}
 
 func newControllerDefaults(presenter Presenter) Controller {
 	info := status.Info{Presenter: presenter}

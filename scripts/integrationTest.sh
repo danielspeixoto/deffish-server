@@ -7,7 +7,8 @@ export MONGO_CONNECTION=mongodb://localhost:27017
 export MONGO_DB_NAME=deffishtest
 go build main.go
 ./main & RUNNING_PID=$!
-jest test
+jest --runInBand test
+sleep 5
 docker rm --force -v deffishdb
 kill ${RUNNING_PID}
 
