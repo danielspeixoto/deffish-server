@@ -36,7 +36,7 @@ func TestEssayOneItem(t *testing.T) {
 			}
 		})
 
-		t.Run("Find All", func(t *testing.T) {
+		t.Run("FindAll FindAll", func(t *testing.T) {
 			essays, err := essayRepo.Find()
 			if err != nil { t.Fatal(err) }
 
@@ -98,6 +98,41 @@ func TextEssay_ManyItems(t *testing.T) {
 			}
 			if essays[1].Title.Value != "B" {
 				t.Fatalf("Title incorrect")
+			}
+		})
+
+		t.Run("Random should give different results each time is run", func(t *testing.T) {
+			var randomEssays []aggregates.Essay
+			for i := 0; i < 10; i++ {
+				questions, err := essayRepo.Random(1)
+				if err != nil {
+					t.Fatal(err)
+				}
+
+				if len(questions) != 1 {
+					t.Fail()
+				}
+				randomEssays = append(randomEssays, questions[0])
+			}
+
+			for i := 1; i < len(randomEssays); i++ {
+				if randomEssays[i].Topic.Value != randomEssays[0].Topic.Value {
+					break
+				}
+				if i == len(randomEssays) - 1 {
+					t.Errorf("No randomness")
+				}
+			}
+		})
+
+		t.Run("Random without tags should retrieve all", func(t *testing.T) {
+
+			questions, err := essayRepo.Random(100)
+			if err != nil { t.Fatal(err) }
+
+			if len(questions) != 6 {
+				t.Errorf("Random should return all questions. " +
+					"Expected: %v, Got: %v", 6, len(questions))
 			}
 		})
 	})

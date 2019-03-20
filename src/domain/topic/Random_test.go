@@ -1,8 +1,8 @@
-package essay
+package topic
 
 import (
 	"deffish-server/src/aggregates"
-	"deffish-server/src/boundary/essay"
+	"deffish-server/src/boundary/topic"
 	"github.com/golang/mock/gomock"
 	"testing"
 )
@@ -11,8 +11,8 @@ func TestRandomSetsMaximumValue(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	repo := essay.NewMockIRepository(ctrl)
-	presenter := essay.NewMockIRandomPresenter(ctrl)
+	repo := topic.NewMockIRepository(ctrl)
+	presenter := topic.NewMockIRandomPresenter(ctrl)
 
 	useCase := Random{
 		Repo:      repo,
@@ -22,7 +22,7 @@ func TestRandomSetsMaximumValue(t *testing.T) {
 
 	repo.EXPECT().
 		Random(10).
-		Return([]aggregates.Question{}, nil)
+		Return([]aggregates.Topic{}, nil)
 
 	presenter.EXPECT().
 		OnListReceived(gomock.Any())

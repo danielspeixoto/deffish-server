@@ -63,6 +63,103 @@ func (mr *MockIRepositoryMockRecorder) Id(id interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Id", reflect.TypeOf((*MockIRepository)(nil).Id), id)
 }
 
+// Random mocks base method
+func (m *MockIRepository) Random(amount int) ([]aggregates.Topic, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Random", amount)
+	ret0, _ := ret[0].([]aggregates.Topic)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Random indicates an expected call of Random
+func (mr *MockIRepositoryMockRecorder) Random(amount interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Random", reflect.TypeOf((*MockIRepository)(nil).Random), amount)
+}
+
+// MockIRandomUseCase is a mock of IRandomUseCase interface
+type MockIRandomUseCase struct {
+	ctrl     *gomock.Controller
+	recorder *MockIRandomUseCaseMockRecorder
+}
+
+// MockIRandomUseCaseMockRecorder is the mock recorder for MockIRandomUseCase
+type MockIRandomUseCaseMockRecorder struct {
+	mock *MockIRandomUseCase
+}
+
+// NewMockIRandomUseCase creates a new mock instance
+func NewMockIRandomUseCase(ctrl *gomock.Controller) *MockIRandomUseCase {
+	mock := &MockIRandomUseCase{ctrl: ctrl}
+	mock.recorder = &MockIRandomUseCaseMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use
+func (m *MockIRandomUseCase) EXPECT() *MockIRandomUseCaseMockRecorder {
+	return m.recorder
+}
+
+// Random mocks base method
+func (m *MockIRandomUseCase) Random(amount int) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "Random", amount)
+}
+
+// Random indicates an expected call of Random
+func (mr *MockIRandomUseCaseMockRecorder) Random(amount interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Random", reflect.TypeOf((*MockIRandomUseCase)(nil).Random), amount)
+}
+
+// MockIRandomPresenter is a mock of IRandomPresenter interface
+type MockIRandomPresenter struct {
+	ctrl     *gomock.Controller
+	recorder *MockIRandomPresenterMockRecorder
+}
+
+// MockIRandomPresenterMockRecorder is the mock recorder for MockIRandomPresenter
+type MockIRandomPresenterMockRecorder struct {
+	mock *MockIRandomPresenter
+}
+
+// NewMockIRandomPresenter creates a new mock instance
+func NewMockIRandomPresenter(ctrl *gomock.Controller) *MockIRandomPresenter {
+	mock := &MockIRandomPresenter{ctrl: ctrl}
+	mock.recorder = &MockIRandomPresenterMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use
+func (m *MockIRandomPresenter) EXPECT() *MockIRandomPresenterMockRecorder {
+	return m.recorder
+}
+
+// OnListReceived mocks base method
+func (m *MockIRandomPresenter) OnListReceived(arg0 []aggregates.Topic) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "OnListReceived", arg0)
+}
+
+// OnListReceived indicates an expected call of OnListReceived
+func (mr *MockIRandomPresenterMockRecorder) OnListReceived(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "OnListReceived", reflect.TypeOf((*MockIRandomPresenter)(nil).OnListReceived), arg0)
+}
+
+// OnError mocks base method
+func (m *MockIRandomPresenter) OnError(arg0 error) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "OnError", arg0)
+}
+
+// OnError indicates an expected call of OnError
+func (mr *MockIRandomPresenterMockRecorder) OnError(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "OnError", reflect.TypeOf((*MockIRandomPresenter)(nil).OnError), arg0)
+}
+
 // MockIByIdUseCase is a mock of IByIdUseCase interface
 type MockIByIdUseCase struct {
 	ctrl     *gomock.Controller

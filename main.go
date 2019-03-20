@@ -2,6 +2,7 @@ package main
 
 import (
 	"deffish-server/src/data/mongo"
+	"deffish-server/src/injection/essay"
 	"deffish-server/src/presentation"
 	"deffish-server/src/presentation/question"
 	"deffish-server/src/presentation/status"
@@ -27,6 +28,7 @@ func main() {
 	)
 
 	presentation.NewRouter(
+		essay.GetRouter(repo.Essays),
 		status.Router{},
 		question.Router{Repo: repo.Questions},
 		config.Port)

@@ -3,6 +3,7 @@ package mongo
 import (
 	"context"
 	"deffish-server/src/aggregates"
+	"deffish-server/src/boundary/essay"
 	"deffish-server/src/helpers"
 	"github.com/mongodb/mongo-go-driver/bson"
 	"github.com/mongodb/mongo-go-driver/bson/primitive"
@@ -12,10 +13,10 @@ import (
 )
 
 type EssayRepository struct {
-	essays *mongo.Collection
+	collection *mongo.Collection
 }
 
-//var _ essay.IRepository = (*EssayRepository)(nil)
+var _ essay.IRepository = (*EssayRepository)(nil)
 
 type Essay struct {
 	Id      primitive.ObjectID `bson:"_id,omitempty"`
@@ -31,7 +32,7 @@ func (repo EssayRepository) Comment(essayId aggregates.Id, comment aggregates.Co
 	objId, err := primitive.ObjectIDFromHex(essayId.Value)
 	if err != nil { return err }
 
-	res, err := repo.essays.UpdateOne(ctx, bson.M{"_id": objId},
+	res, err := repo.collection.UpdateOne(ctx, bson.M{"_id": objId},
 		bson.M{"$push": bson.M{"comments": comment.Text.Value}})
 	log.Print(res.MatchedCount)
 	return err
@@ -39,22 +40,32 @@ func (repo EssayRepository) Comment(essayId aggregates.Id, comment aggregates.Co
 
 func (repo EssayRepository) FilterByTopic(topicId aggregates.Id) ([]aggregates.Essay, error) {
 	ctx, _ := context.WithTimeout(context.Background(), 1 * time.Second)
-	cursor, err := repo.essays.Find(ctx, bson.M{
+	cursor, err := repo.collection.Find(ctx, bson.M{
 		"topicId": topicId.Value,
 	})
 	if err != nil { return nil, err }
 	return fromCursorToEssays(cursor)
 }
 
+func (repo EssayRepository) Random(amount int) ([]aggregates.Essay, error) {
+	ctx, _ := context.WithTimeout(context.Background(), 10 * time.Second)
+
+	cursor, err := repo.collection.Aggregate(ctx,  bson.D{
+		{"", bson.M{ "$sample": bson.M{"size": amount} }},
+	})
+	if err != nil { return nil, err }
+	return fromCursorToEssays(cursor)
+}
+
 func (repo EssayRepository) Insert(essay aggregates.Essay) (aggregates.Id, error) {
-	id, err := insert(repo.essays, toMongoEssay(essay))
+	id, err := insert(repo.collection, toMongoEssay(essay))
 	return id,  err
 }
 
 
 func (repo EssayRepository) Find() ([]aggregates.Essay, error) {
 	ctx, _ := context.WithTimeout(context.Background(), 1 * time.Second)
-	cursor, err := repo.essays.Find(ctx, nil)
+	cursor, err := repo.collection.Find(ctx, nil)
 	if err != nil { return nil, err }
 	return fromCursorToEssays(cursor)
 }
@@ -65,7 +76,7 @@ func (repo EssayRepository) Id(id aggregates.Id) (aggregates.Essay, error) {
 	objId, err := primitive.ObjectIDFromHex(id.Value)
 	if err != nil { return aggregates.Essay{}, err }
 
-	res := repo.essays.FindOne(ctx,
+	res := repo.collection.FindOne(ctx,
 		bson.M{"_id": objId},
 	)
 	var mongoEssay Essay
@@ -122,5 +133,5 @@ func toMongoEssay(essay aggregates.Essay) Essay {
 }
 
 func (repo EssayRepository) drop() {
-	_ = repo.essays.Drop(context.Background())
+	_ = repo.collection.Drop(context.Background())
 }

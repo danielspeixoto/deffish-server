@@ -1,38 +1,39 @@
-package question
+package topic
 
 import (
 	"deffish-server/src/aggregates"
-	"deffish-server/src/domain/question"
+	boundary "deffish-server/src/boundary/topic"
 	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"io/ioutil"
 	"log"
-	"net/http"
 	"strconv"
 )
 
 type Controller struct {
-	UploadUseCase question.IUploadUseCase
-	RandomUseCase question.IRandomUseCase
-	GetById question.IByIdUseCase
+	UploadUseCase boundary.IUploadUseCase
+	RandomUseCase boundary.IRandomUseCase
+	GetById boundary.IByIdUseCase
 }
 
-func (ctrl Controller) Upload(request *http.Request) {
+func (ctrl Controller) Upload(c *gin.Context)  {
+	request := c.Request
 	bodyBytes, err := ioutil.ReadAll(request.Body)
 	if err != nil { panic(err) }
 
-	var question Question
-	err = json.Unmarshal(bodyBytes, &question)
+	var topic Topic
+	err = json.Unmarshal(bodyBytes, &topic)
 	if err != nil {
 		log.Printf("request body of failed json parsing: %s", request.Body)
 		panic(err)
 	}
 
 	ctrl.UploadUseCase.Upload(
-		fromRequestToQuestion(question))
+		fromRequestToTopic(topic))
 }
 
-func (ctrl Controller) Random(request *http.Request) {
+func (ctrl Controller) Random(c *gin.Context)  {
+	request := c.Request
 	params := request.URL.Query()
 
 	amountParam, ok := params["amount"]
@@ -40,27 +41,15 @@ func (ctrl Controller) Random(request *http.Request) {
 		amountParam = []string{"2"}
 	}
 
-	tagsParam, ok := params["tags[]"]
-	if !ok || len(tagsParam[0]) < 1 {
-		tagsParam = []string{}
-	}
-
-	var tags []aggregates.Tag
-	for _, element := range tagsParam {
-		tags = append(tags, aggregates.Tag{
-			Name: element,
-		})
-	}
-
 	amount, err := strconv.Atoi(amountParam[0])
 	if err != nil {
 		panic(err)
 	}
 
-	ctrl.RandomUseCase.Random(amount, tags)
+	ctrl.RandomUseCase.Random(amount)
 }
 
-func (ctrl Controller) QuestionById(c *gin.Context)  {
+func (ctrl Controller) TopicById(c *gin.Context)  {
 	id := c.Param("id")
 	ctrl.GetById.Id(aggregates.Id{Value: id})
 }

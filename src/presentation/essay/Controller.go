@@ -18,6 +18,14 @@ type Controller struct {
 	CommentUseCase boundary.ICommentUseCase
 }
 
+func (ctrl Controller) FilterByTopic(c *gin.Context)  {
+	request := c.Request
+	topicId := request.URL.Query().Get("topicId")
+	if topicId != "" {
+		ctrl.FilterByTopicUseCase.FilterByTopic(aggregates.Id{topicId})
+	}
+}
+
 func (ctrl Controller) Comment(c *gin.Context)  {
 	request := c.Request
 	bodyBytes, err := ioutil.ReadAll(request.Body)
@@ -53,7 +61,6 @@ func (ctrl Controller) Upload(c *gin.Context)  {
 }
 
 func (ctrl Controller) Random(c *gin.Context)  {
-	// TODO: Check if contains param topic
 	request := c.Request
 	params := request.URL.Query()
 

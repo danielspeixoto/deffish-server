@@ -65,7 +65,7 @@ func TestController_Random(t *testing.T) {
 		Random(2, []aggregates.Tag{{Name: "enem"}, {Name: "matematica"}})
 
 	request, err := http.NewRequest(
-		"GET", "/random?amount=2&tags[]=enem&tags[]=matematica", nil)
+		"GET", "?amount=2&tags[]=enem&tags[]=matematica", nil)
 	if err != nil { panic(err) }
 
 	controller.Random(request)

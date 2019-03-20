@@ -1,90 +1,70 @@
-package question
+package topic
 
 import (
 	"bytes"
-	"deffish-server/src/aggregates"
-	"deffish-server/src/domain/question"
-	"encoding/json"
+	"deffish-server/src/boundary/topic"
+	"github.com/gin-gonic/gin"
 	"github.com/golang/mock/gomock"
 	"net/http"
 	"testing"
 )
 
-var q = aggregates.Question{
-	PDF: aggregates.PDF{
-		Content: []byte {1, 0},
-	},
-	Answer: 0,
-	Choices: [] aggregates.Choice{
-		{"A"}, {"B"}, {"C"},
-	},
-	Tags: [] aggregates.Tag{
-		{"matematica"},
-		{"enem2017"},
-	},
-}
-
 func TestController_Upload(t *testing.T) {
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()
 
-	uploadQuestion := question.NewMockIUploadUseCase(mockCtrl)
+	uploadTopic := topic.NewMockIUploadUseCase(mockCtrl)
 
-	controller := Controller{UploadUseCase: uploadQuestion}
+	controller := Controller{UploadUseCase: uploadTopic}
 
-	uploadQuestion.EXPECT().
-		Upload(gomock.Eq(q))
+	uploadTopic.EXPECT().
+		Upload(gomock.Eq(example))
 
-	body, err := json.Marshal(map[string]interface{}{
-		"pdf":  []byte {1, 0},
-		"answer": 0,
-		"choices": []string{
-			"A", "B", "C",
-		},
-		"tags": []string{
-			"matematica", "enem2017",
-		},
-	})
-	if err != nil { panic(err) }
 	request, err := http.NewRequest(
-		"POST", "/upload", bytes.NewBuffer(body))
+		"POST", "/upload", bytes.NewBuffer(exampleJson))
 	if err != nil { panic(err) }
 
-	controller.Upload(request)
+	controller.Upload(&gin.Context{
+		Request:request,
+	})
 }
 
 func TestController_Random(t *testing.T) {
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()
 
-	useCase := question.NewMockIRandomUseCase(mockCtrl)
+	useCase := topic.NewMockIRandomUseCase(mockCtrl)
 
 	controller := Controller{RandomUseCase: useCase}
 
 	useCase.EXPECT().
-		Random(2, []aggregates.Tag{{Name: "enem"}, {Name: "matematica"}})
+		Random(2)
 
 	request, err := http.NewRequest(
-		"GET", "/random?amount=2&tags[]=enem&tags[]=matematica", nil)
+		"GET", "?amount=2", nil)
 	if err != nil { panic(err) }
 
-	controller.Random(request)
+	controller.Random(&gin.Context{
+		Request:request,
+	})
 }
 
 func TestController_RandomEmptyParams(t *testing.T) {
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()
 
-	useCase := question.NewMockIRandomUseCase(mockCtrl)
+	useCase := topic.NewMockIRandomUseCase(mockCtrl)
 
 	controller := Controller{RandomUseCase: useCase}
 
 	useCase.EXPECT().
-		Random(2, gomock.Any())
+		Random(2)
 
 	request, err := http.NewRequest(
-		"GET", "/random", nil)
+		"GET", "/all", nil)
 	if err != nil { panic(err) }
 
-	controller.Random(request)
+	controller.Random(&gin.Context{
+		Request:request,
+	})
 }

@@ -1,10 +1,13 @@
 package essay
 
-import "deffish-server/src/aggregates"
+import (
+	"deffish-server/src/aggregates"
+	"deffish-server/src/boundary/essay"
+)
 
 type FilterByTopic struct {
-	Repo IRepository
-	Presenter IFilterByTopicPresenter
+	Repo essay.IRepository
+	Presenter essay.IFilterByTopicPresenter
 }
 
 func (useCase FilterByTopic) FilterByTopic(topicId aggregates.Id) {
@@ -16,4 +19,4 @@ func (useCase FilterByTopic) FilterByTopic(topicId aggregates.Id) {
 	}
 }
 
-var _ IFilterByTopicUseCase = (*FilterByTopic)(nil)
+var _ essay.IFilterByTopicUseCase = (*FilterByTopic)(nil)

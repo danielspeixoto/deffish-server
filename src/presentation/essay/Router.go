@@ -14,8 +14,13 @@ func (handler Router) Route(router *gin.RouterGroup) {
 			ctrl.Upload(ctx)
 		}))
 	router.GET("/", handler.handle(
-		func(ctrl Controller, ctx *gin.Context) {
-			ctrl.Random(ctx)
+		func (ctrl Controller, ctx *gin.Context) {
+			query := ctx.Request.URL.Query()
+			if query.Get("mode") == "random" {
+				ctrl.Random(ctx)
+			} else if query.Get("topicId") != "" {
+				ctrl.FilterByTopic(ctx)
+			}
 		}))
 	router.POST("/:id/comment", handler.handle(
 		func (ctrl Controller, ctx *gin.Context) {
@@ -29,7 +34,7 @@ func (handler Router) Route(router *gin.RouterGroup) {
 
 func (handler Router) handle(callback func(Controller, *gin.Context)) func(c *gin.Context){
 	return func(c *gin.Context) {
-		callback(handler.Controller, c)
+		callback(handler.Controller(Presenter{Writer:c.Writer}), c)
 	}
 }
 

@@ -1,9 +1,9 @@
-package question
+package topic
 
 import (
 	"bytes"
 	"deffish-server/src/aggregates"
-	"deffish-server/src/domain/question"
+	"deffish-server/src/boundary/topic"
 	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"github.com/golang/mock/gomock"
@@ -15,10 +15,10 @@ import (
 	"testing"
 )
 
-func runServer(repo question.IRepository, port string) {
-	questions := Router{repo}
+func runServer(repo topic.IRepository, port string) {
+	topics := Router{repo}
 	router := gin.Default()
-	questions.Route(router.Group("/questions"))
+	topics.Route(router.Group("/topics"))
 	err := router.Run(":" + port)
 	if err != nil {
 		panic(err)
@@ -29,44 +29,18 @@ func TestRouter(t *testing.T) {
 	port := "5001"
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	repo := question.NewMockIRepository(ctrl)
+	repo := topic.NewMockIRepository(ctrl)
 	go runServer(repo, port)
-
-	question := aggregates.Question{
-		PDF: aggregates.PDF{
-			Content: []byte {1, 0},
-		},
-		Answer: 0,
-		Choices: [] aggregates.Choice{
-			{"A"}, {"B"}, {"C"},
-		},
-		Tags: [] aggregates.Tag{
-			{"matematica"},
-			{"enem2017"},
-		},
-	}
-
 
 	t.Run("Upload", func(t *testing.T) {
 
 		repo.EXPECT().
-			Insert(gomock.Eq(question))
+			Insert(gomock.Eq(example))
 
-		body, err := json.Marshal(map[string]interface{}{
-			"pdf":  []byte {1, 0},
-			"answer": 0,
-			"choices": []string{
-				"A", "B", "C",
-			},
-			"tags": []string{
-				"matematica", "enem2017",
-			},
-		})
-		if err != nil { panic(err) }
 		resp, err := http.Post(
-			"http://localhost:" + port + "/questions",
+			"http://localhost:" + port + "/topics",
 			"application/json",
-			bytes.NewBuffer(body))
+			bytes.NewBuffer(exampleJson))
 
 		expectedStatus := strconv.Itoa(http.StatusCreated)
 		receivedStatus := strings.Split(resp.Status, " ")[0]
@@ -91,24 +65,13 @@ func TestRouter(t *testing.T) {
 	t.Run("UploadError", func(t *testing.T) {
 
 		repo.EXPECT().
-			Insert(gomock.Eq(question)).
+			Insert(gomock.Eq(example)).
 			Return(aggregates.Id{}, errors.New("an error"))
 
-		body, err := json.Marshal(map[string]interface{}{
-			"pdf":  []byte {1, 0},
-			"answer": 0,
-			"choices": []string{
-				"A", "B", "C",
-			},
-			"tags": []string{
-				"matematica", "enem2017",
-			},
-		})
-		if err != nil { panic(err) }
 		resp, err := http.Post(
-			"http://localhost:" + port + "/questions/",
+			"http://localhost:" + port + "/topics/",
 			"application/json",
-			bytes.NewBuffer(body))
+			bytes.NewBuffer(exampleJson))
 
 		expectedStatus := strconv.Itoa(http.StatusInternalServerError)
 		receivedStatus := strings.Split(resp.Status, " ")[0]
@@ -132,8 +95,8 @@ func TestRouter(t *testing.T) {
 	})
 	t.Run("Random", func(t *testing.T) {
 		repo.EXPECT().
-			Random(2, gomock.Eq([]aggregates.Tag{{Name: "enem"}, {Name: "matematica"}})).
-			Return([]aggregates.Question{
+			Random(2).
+			Return([]aggregates.Topic{
 				{
 					Id: aggregates.Id{Value: "1"},
 				},
@@ -142,7 +105,7 @@ func TestRouter(t *testing.T) {
 				},
 			}, nil)
 
-		resp, err := http.Get("http://localhost:" + port + "/questions?amount=2&tags[]=enem&tags[]=matematica")
+		resp, err := http.Get("http://localhost:" + port + "/topics?amount=2")
 		if err != nil { panic(err) }
 		body, err := ioutil.ReadAll(resp.Body)
 
@@ -163,9 +126,9 @@ func TestRouter(t *testing.T) {
 
 		repo.EXPECT().
 			Id(gomock.Eq(aggregates.Id{Value: "2"})).
-			Return(aggregates.Question{Id: id}, nil)
+			Return(aggregates.Topic{Id: id}, nil)
 
-		resp, err := http.Get("http://localhost:" + port + "/questions/2")
+		resp, err := http.Get("http://localhost:" + port + "/topics/2")
 		if err != nil { panic(err) }
 		body, err := ioutil.ReadAll(resp.Body)
 
@@ -176,8 +139,8 @@ func TestRouter(t *testing.T) {
 			t.Fail()
 		}
 
-		question := response.Data.(interface{})
-		if question.(map[string]interface{})["id"] != "2" {
+		topic := response.Data.(interface{})
+		if topic.(map[string]interface{})["id"] != "2" {
 			t.Fail()
 		}
 	})

@@ -39,7 +39,7 @@ func TestQuestionOneItem(t *testing.T) {
 			}
 		})
 
-		t.Run("Find All", func(t *testing.T) {
+		t.Run("FindAll FindAll", func(t *testing.T) {
 			questions, err := questionRepo.Find()
 			if err != nil { t.Fatal(err) }
 

@@ -1,28 +1,28 @@
-package essay
+package topic
 
 import (
-	"deffish-server/src/boundary/essay"
+	"deffish-server/src/boundary/topic"
 	"log"
 )
 
 type Random struct {
-	Repo      essay.IRepository
-	Presenter essay.IRandomPresenter
+	Repo      topic.IRepository
+	Presenter topic.IRandomPresenter
 	Max       int
 }
 
-var _ essay.IRandomUseCase = (*Random)(nil)
+var _ topic.IRandomUseCase = (*Random)(nil)
 
 func (useCase Random) Random(amount int) {
 	if amount > useCase.Max {
-		log.Printf("An user requested %v essays, max is %v", amount, useCase.Max)
+		log.Printf("An user requested %v topics, max is %v", amount, useCase.Max)
 		amount = useCase.Max
 	}
-	essays, err := useCase.Repo.Random(amount)
+	topics, err := useCase.Repo.Random(amount)
 	if err != nil {
 		log.Print(err)
 		useCase.Presenter.OnError(err)
 	} else {
-		useCase.Presenter.OnListReceived(essays)
+		useCase.Presenter.OnListReceived(topics)
 	}
 }

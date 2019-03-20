@@ -1,8 +1,8 @@
-package essay
+package topic
 
 import (
 	"deffish-server/src/aggregates"
-	"deffish-server/src/boundary/essay"
+	"deffish-server/src/boundary/topic"
 	"github.com/golang/mock/gomock"
 	"testing"
 )
@@ -11,8 +11,8 @@ func TestQuestionByIdUseCase_Id(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	presenter := essay.NewMockIByIdPresenter(ctrl)
-	repo := essay.NewMockIRepository(ctrl)
+	presenter := topic.NewMockIByIdPresenter(ctrl)
+	repo := topic.NewMockIRepository(ctrl)
 
 	useCase := ById{
 		repo,
@@ -20,13 +20,13 @@ func TestQuestionByIdUseCase_Id(t *testing.T) {
 	}
 
 	id := aggregates.Id{Value: "1"}
-	question := aggregates.Question{Id: id}
+	topic := aggregates.Topic{Id: id}
 
 	repo.EXPECT().
 		Id(gomock.Eq(id)).
-		Return(question, nil)
+		Return(topic, nil)
 
-	presenter.EXPECT().OnReceived(question)
+	presenter.EXPECT().OnReceived(topic)
 
 	useCase.Id(id)
 }

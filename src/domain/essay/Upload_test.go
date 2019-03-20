@@ -2,6 +2,7 @@ package essay
 
 import (
 	"deffish-server/src/aggregates"
+	"deffish-server/src/boundary/essay"
 	"github.com/golang/mock/gomock"
 	"github.com/pkg/errors"
 	"testing"
@@ -19,12 +20,12 @@ var q = aggregates.Essay{
 	},
 }
 
-func TestUploadQuestionSuccessful(t *testing.T) {
+func TestUploadSuccessful(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	repo := NewMockIRepository(ctrl)
-	presenter := NewMockIUploadPresenter(ctrl)
+	repo := essay.NewMockIRepository(ctrl)
+	presenter := essay.NewMockIUploadPresenter(ctrl)
 
 	useCase := Upload{
 		Repo: repo,
@@ -39,12 +40,12 @@ func TestUploadQuestionSuccessful(t *testing.T) {
 	useCase.Upload(q)
 }
 
-func TestUploadQuestionError(t *testing.T) {
+func TestUploadError(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	repo := NewMockIRepository(ctrl)
-	presenter := NewMockIUploadPresenter(ctrl)
+	repo := essay.NewMockIRepository(ctrl)
+	presenter := essay.NewMockIUploadPresenter(ctrl)
 
 	useCase := Upload{
 		Repo: repo,

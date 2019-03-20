@@ -1,10 +1,13 @@
 package essay
 
-import "deffish-server/src/aggregates"
+import (
+	"deffish-server/src/aggregates"
+	"deffish-server/src/boundary/essay"
+)
 
 type Comment struct {
-	Repo IRepository
-	Presenter ICommentPresenter
+	Repo essay.IRepository
+	Presenter essay.ICommentPresenter
 }
 
 func (useCase Comment) Comment(essayId aggregates.Id, comment aggregates.Comment) {
@@ -16,4 +19,4 @@ func (useCase Comment) Comment(essayId aggregates.Id, comment aggregates.Comment
 	}
 }
 
-var _ ICommentUseCase = (*Comment)(nil)
+var _ essay.ICommentUseCase = (*Comment)(nil)

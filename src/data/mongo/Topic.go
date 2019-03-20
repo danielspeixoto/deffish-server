@@ -3,7 +3,7 @@ package mongo
 import (
 	"context"
 	"deffish-server/src/aggregates"
-	"deffish-server/src/domain/topic"
+	"deffish-server/src/boundary/topic"
 	"deffish-server/src/helpers"
 	"github.com/mongodb/mongo-go-driver/bson"
 	"github.com/mongodb/mongo-go-driver/bson/primitive"
@@ -12,7 +12,7 @@ import (
 )
 
 type TopicRepository struct {
-	topics *mongo.Collection
+	collection *mongo.Collection
 }
 
 var _ topic.IRepository = (*TopicRepository)(nil)
@@ -23,18 +23,28 @@ type Topic struct {
 	Title    string           `bson:"title"`
 }
 
+func (repo TopicRepository) Random(amount int) ([]aggregates.Topic, error) {
+	ctx, _ := context.WithTimeout(context.Background(), 10 * time.Second)
+
+	cursor, err := repo.collection.Aggregate(ctx,  bson.D{
+		{"", bson.M{ "$sample": bson.M{"size": amount} }},
+	})
+	if err != nil { return nil, err }
+	return fromCursorToTopics(cursor)
+}
+
 func (repo TopicRepository) Insert(topic aggregates.Topic) (aggregates.Id, error) {
-	id, err := insert(repo.topics, toMongoTopic(topic))
+	id, err := insert(repo.collection, toMongoTopic(topic))
 	return id,  err
 }
 
 func (repo TopicRepository) drop() {
-	_ = repo.topics.Drop(context.Background())
+	_ = repo.collection.Drop(context.Background())
 }
 
-func (repo TopicRepository) Find() ([]aggregates.Topic, error) {
+func (repo TopicRepository) FindAll() ([]aggregates.Topic, error) {
 	ctx, _ := context.WithTimeout(context.Background(), 1 * time.Second)
-	cursor, err := repo.topics.Find(ctx, nil)
+	cursor, err := repo.collection.Find(ctx, nil)
 	if err != nil { return nil, err }
 	return fromCursorToTopics(cursor)
 }
@@ -45,7 +55,7 @@ func (repo TopicRepository) Id(id aggregates.Id) (aggregates.Topic, error) {
 	objId, err := primitive.ObjectIDFromHex(id.Value)
 	if err != nil { return aggregates.Topic{}, err }
 
-	res := repo.topics.FindOne(ctx,
+	res := repo.collection.FindOne(ctx,
 		bson.M{"_id": objId},
 	)
 	var mongoTopic Topic

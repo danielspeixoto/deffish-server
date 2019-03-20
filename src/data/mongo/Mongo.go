@@ -27,8 +27,8 @@ func NewRepository(
 	db := client.Database(database)
 	return &Repository{
 		NewQuestionRepository(db.Collection("questions")),
-		&TopicRepository{db.Collection("topics")},
-		&EssayRepository{db.Collection("essays")},
+		&TopicRepository{db.Collection("collection")},
+		&EssayRepository{db.Collection("collection")},
 	}
 }
 

@@ -9,10 +9,12 @@ type IRouter interface {
 	Route(router *gin.RouterGroup)
 }
 
-func NewRouter(status IRouter, questions IRouter, port int) {
+func NewRouter(topics IRouter, essays IRouter, status IRouter, questions IRouter, port int) {
 	router := gin.Default()
 	status.Route(router.Group("/"))
 	questions.Route(router.Group("/question"))
+	essays.Route(router.Group("/essay"))
+	topics.Route(router.Group("/topic"))
 	err := router.Run(":" + strconv.Itoa(port))
 	if err != nil {
 		panic(err)

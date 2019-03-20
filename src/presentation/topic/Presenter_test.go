@@ -1,7 +1,8 @@
-package question
+package topic
 
 import (
 	"deffish-server/src/aggregates"
+	"encoding/json"
 	"github.com/pkg/errors"
 	"net/http"
 	"net/http/httptest"
@@ -9,7 +10,7 @@ import (
 	"testing"
 )
 
-func TestPresenter_OnQuestionUploaded(t *testing.T) {
+func TestPresenter_OnTopicUploaded(t *testing.T) {
 	recorder := httptest.NewRecorder()
 	presenter := Presenter{Writer: recorder}
 	presenter.OnUploaded()
@@ -47,20 +48,19 @@ func TestPresenter_OnError(t *testing.T) {
 	}
 }
 
-func TestPresenter_OnQuestionsReceived(t *testing.T) {
+func TestPresenter_OnTopicsReceived(t *testing.T) {
 	recorder := httptest.NewRecorder()
 	presenter := Presenter{Writer: recorder}
 
-	presenter.OnListReceived([]aggregates.Question{
+	presenter.OnListReceived([]aggregates.Topic{
+		example,
 		{
-			Id: aggregates.Id{Value: "1"},
-			PDF: aggregates.PDF{Content: []byte{1,0}},
-			Answer: 0,
-		},
-		{
-			Id: aggregates.Id{Value: "2"},
-			PDF: aggregates.PDF{Content: []byte{0,1}},
-			Answer: 1,
+			Title: aggregates.Title{
+				Value: "B",
+			},
+			Content: []aggregates.Text{
+				{"B"}, {"A"},
+			},
 		},
 	})
 
@@ -69,33 +69,30 @@ func TestPresenter_OnQuestionsReceived(t *testing.T) {
 			status , http.StatusOK)
 	}
 
-	expected := `{"status":"ok","data":[{"id":"1","pdf":"AQA=","answer":0,"choices":[],"tags":[]},{"id":"2","pdf":"AAE=","answer":1,"choices":[],"tags":[]}]}`
-	body := strings.TrimRight(recorder.Body.String(), "\n")
-	if body != expected {
-		t.Errorf("handler returned unexpected body:\n got  %v want %v",
-			body, expected)
+	result := &aggregates.Response{}
+	_ = json.Unmarshal(recorder.Body.Bytes(), result)
+
+	if result.Data.([]interface{})[0].(map[string]interface{})["title"] != example.Title.Value ||
+		result.Data.([]interface{})[1].(map[string]interface{})["title"] != "B"{
+		t.Fatal()
 	}
 }
 
-func TestPresenter_OnQuestionReceived(t *testing.T) {
+func TestPresenter_OnTopicReceived(t *testing.T) {
 	recorder := httptest.NewRecorder()
 	presenter := Presenter{Writer: recorder}
 
-	presenter.OnReceived(aggregates.Question{
-		Id: aggregates.Id{Value: "1"},
-		PDF: aggregates.PDF{Content: []byte{1,0}},
-		Answer: 0,
-	})
+	presenter.OnReceived(example)
 
 	if status := recorder.Code; status != http.StatusOK {
 		t.Errorf("handler returned wrong status code: got %v want %v",
 			status , http.StatusOK)
 	}
 
-	expected := `{"status":"ok","data":{"id":"1","pdf":"AQA=","answer":0,"choices":[],"tags":[]}}`
-	body := strings.TrimRight(recorder.Body.String(), "\n")
-	if body != expected {
-		t.Errorf("handler returned unexpected body:\n got  %v want %v",
-			body, expected)
+	result := &aggregates.Response{}
+	_ = json.Unmarshal(recorder.Body.Bytes(), result)
+
+	if result.Data.(interface{}).(map[string]interface{})["title"] != example.Title.Value {
+		t.Fatal()
 	}
 }

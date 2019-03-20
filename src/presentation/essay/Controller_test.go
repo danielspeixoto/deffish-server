@@ -2,69 +2,95 @@ package essay
 
 import (
 	"bytes"
+	"deffish-server/src/aggregates"
 	"deffish-server/src/boundary/essay"
+	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"github.com/golang/mock/gomock"
 	"net/http"
 	"testing"
 )
 
-func TestController_Upload(t *testing.T) {
-	mockCtrl := gomock.NewController(t)
-	defer mockCtrl.Finish()
+func TestRouter(t *testing.T) {
+	port := "5001"
+	relativePath := "/essays"
+	url := "http://localhost:" + port + relativePath
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
 
-	uploadEssay := essay.NewMockIUploadUseCase(mockCtrl)
+	upload := essay.NewMockIUploadUseCase(ctrl)
+	random := essay.NewMockIRandomUseCase(ctrl)
+	byId := essay.NewMockIByIdUseCase(ctrl)
+	filterByTopic := essay.NewMockIFilterByTopicUseCase(ctrl)
+	comment := essay.NewMockICommentUseCase(ctrl)
 
-	controller := Controller{UploadUseCase: uploadEssay}
 
-	uploadEssay.EXPECT().
-		Upload(gomock.Eq(example))
+	essays := Router{
+		Controller: func(presenter Presenter) Controller {
+			return Controller {
+				UploadUseCase: upload,
+				RandomUseCase:random,
+				GetById:byId,
+				FilterByTopicUseCase:filterByTopic,
+				CommentUseCase:comment,
+			}
+		},
+	}
+	router := gin.Default()
+	essays.Route(router.Group(relativePath))
+	go func() {
+		err := router.Run(":" + port)
+		if err != nil {
+			panic(err)
+		}
+	}()
 
-	request, err := http.NewRequest(
-		"POST", "/upload", bytes.NewBuffer(exampleJson))
-	if err != nil { panic(err) }
 
-	controller.Upload(&gin.Context{
-		Request:request,
+	t.Run("Upload", func(t *testing.T) {
+
+		upload.EXPECT().Upload(gomock.Eq(example))
+		_, err := http.Post(
+			url,
+			"application/json",
+			bytes.NewBuffer(exampleJson))
+
+		if err != nil { panic(err) }
+
 	})
-}
 
-func TestController_Random(t *testing.T) {
-	mockCtrl := gomock.NewController(t)
-	defer mockCtrl.Finish()
+	t.Run("Random", func(t *testing.T) {
 
-	useCase := essay.NewMockIRandomUseCase(mockCtrl)
+		random.EXPECT().Random(2)
+		_, err := http.Get(url + "?amount=2&mode=random")
+		if err != nil { panic(err) }
 
-	controller := Controller{RandomUseCase: useCase}
-
-	useCase.EXPECT().
-		Random(2)
-
-	request, err := http.NewRequest(
-		"GET", "?amount=2", nil)
-	if err != nil { panic(err) }
-
-	controller.Random(&gin.Context{
-		Request:request,
 	})
-}
+	t.Run("Id", func(t *testing.T) {
 
-func TestController_RandomEmptyParams(t *testing.T) {
-	mockCtrl := gomock.NewController(t)
-	defer mockCtrl.Finish()
+		byId.EXPECT().
+			Id(gomock.Eq(aggregates.Id{Value: "2"}))
 
-	useCase := essay.NewMockIRandomUseCase(mockCtrl)
+		_, err := http.Get(url + "/2")
+		if err != nil { panic(err) }
 
-	controller := Controller{RandomUseCase: useCase}
+	})
+	t.Run("Comment", func(t *testing.T) {
+		comment.EXPECT().
+			Comment(aggregates.Id{"2"}, aggregates.Comment{aggregates.Text{"A"}})
 
-	useCase.EXPECT().
-		Random(2)
+		comment , _ := json.Marshal("A")
 
-	request, err := http.NewRequest(
-		"GET", "/all", nil)
-	if err != nil { panic(err) }
+		_, err := http.Post(
+			url + "/2/comment",
+			"application/json",
+			bytes.NewBuffer(comment))
+		if err != nil { panic(err) }
+	})
 
-	controller.Random(&gin.Context{
-		Request:request,
+	t.Run("Filter by topic", func(t *testing.T) {
+		filterByTopic.EXPECT().FilterByTopic(aggregates.Id{"2"})
+		_, err := http.Get(url + "?topicId=2")
+		if err != nil { panic(err) }
+
 	})
 }

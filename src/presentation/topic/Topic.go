@@ -1,50 +1,33 @@
-package question
+package topic
 
 import (
 	"deffish-server/src/aggregates"
 	"deffish-server/src/helpers"
 )
 
-type Question struct {
+type Topic struct {
 	Id string `json:"id"`
-	PDF     []byte `json:"pdf"`
-	Answer  int `json:"answer"`
-	Choices []string `json:"choices"`
-	Tags    []string `json:"tags"`
+	Title     string `json:"title"`
+	Contents []string `json:"contents"`
 }
 
-func fromRequestToQuestion(question Question) aggregates.Question {
-	var choices []aggregates.Choice
-	for _, element := range question.Choices {
-		choices = append(choices, aggregates.Choice{
-			Content: element,
-		})
-	}
-
-	var tags []aggregates.Tag
-	for _, element := range question.Tags {
-		tags = append(tags, aggregates.Tag{
-			Name: element,
-		})
-	}
-
-	return aggregates.Question{
-		PDF: aggregates.PDF{
-			Content: question.PDF,
+func fromRequestToTopic(topic Topic) aggregates.Topic {
+	return aggregates.Topic{
+		Id: aggregates.Id{
+			topic.Id,
 		},
-		Answer: question.Answer,
-		Choices: choices,
-		Tags: tags,
+		Title: aggregates.Title{
+			topic.Title,
+		},
+		Content: helpers.StringArrToTextArr(topic.Contents),
 	}
 }
 
-func fromQuestionToJson(question aggregates.Question) Question {
-	return Question{
-		Id: question.Id.Value,
-		PDF: question.PDF.Content,
-		Answer: question.Answer,
-		Choices: helpers.ChoicesToStringArray(question.Choices),
-		Tags: helpers.TagsToStringArray(question.Tags),
+func fromTopicToJson(topic aggregates.Topic) Topic {
+	return Topic{
+		Id: topic.Id.Value,
+		Title: topic.Title.Value,
+		Contents: helpers.TextArrToStringArray(topic.Content),
 	}
 }
 

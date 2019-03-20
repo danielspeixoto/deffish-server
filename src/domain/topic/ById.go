@@ -1,14 +1,14 @@
-package essay
+package topic
 
 import (
 	"deffish-server/src/aggregates"
-	"deffish-server/src/boundary/essay"
+	"deffish-server/src/boundary/topic"
 	"github.com/pkg/errors"
 )
 
 type ById struct {
-	Repo essay.IRepository
-	Presenter essay.IByIdPresenter
+	Repo topic.IRepository
+	Presenter topic.IByIdPresenter
 }
 
 func (useCase ById) Id(id aggregates.Id) {
@@ -20,5 +20,5 @@ func (useCase ById) Id(id aggregates.Id) {
 	}
 }
 
-var _ essay.IByIdUseCase = (*ById)(nil)
+var _ topic.IByIdUseCase = (*ById)(nil)
 

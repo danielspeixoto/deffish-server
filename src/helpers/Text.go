@@ -10,3 +10,12 @@ func TextArrToStringArray(objArr []aggregates.Text) []string {
 	return arrStr
 }
 
+func StringArrToTextArr(arr [] string) []aggregates.Text {
+	var arrStr = make([]aggregates.Text, 0)
+	for _, element := range arr {
+		arrStr = append(arrStr, aggregates.Text{
+			element,
+		})
+	}
+	return arrStr
+}
