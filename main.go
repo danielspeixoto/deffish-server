@@ -6,6 +6,7 @@ import (
 	"deffish-server/src/presentation"
 	"deffish-server/src/presentation/question"
 	"deffish-server/src/presentation/status"
+	"deffish-server/src/presentation/topic"
 	"fmt"
 	"log"
 	"os"
@@ -28,6 +29,7 @@ func main() {
 	)
 
 	presentation.NewRouter(
+		topic.Router{Repo: repo.Topics},
 		essay.GetRouter(repo.Essays),
 		status.Router{},
 		question.Router{Repo: repo.Questions},

@@ -24,7 +24,9 @@ func (handler Router) handle(callback func(Controller, *gin.Context)) func(c *gi
 	}
 }
 
-func upload(ctrl Controller, ctx *gin.Context)       { ctrl.Upload(ctx.Request) }
+func upload(ctrl Controller, ctx *gin.Context)       {
+	ctrl.Upload(ctx.Request)
+}
 func random(ctrl Controller, ctx *gin.Context)       {
 	ctrl.Random(ctx.Request)
 }
