@@ -13,11 +13,15 @@ func GetRouter(repo boundary.IRepository) routing.IRouter {
 			uploadEssay := domain.Upload{Repo: repo, Presenter: presenter}
 			random := domain.Random{Repo:repo, Presenter:presenter, Max:10}
 			byId := domain.ById{Repo:repo, Presenter:presenter}
+			comment := domain.Comment{Repo: repo, Presenter:presenter}
+			filterByTopic := domain.FilterByTopic{Repo:repo, Presenter:presenter}
 
 			return presentation.Controller{
 				UploadUseCase: uploadEssay,
 				RandomUseCase:random,
 				GetById: byId,
+				CommentUseCase:comment,
+				FilterByTopicUseCase:filterByTopic,
 			}
 		},
 	}

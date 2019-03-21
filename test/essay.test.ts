@@ -31,7 +31,7 @@ describe("Inserts and manipulates essays", () => {
         const resp = await  axios.get(url + "?topicId=1&amount=10")
         const data = resp.data
         expect(resp.status).toBe(200)
-        expect(data.data.length).toBe(5)
+        expect(data.data.length).toBe(4)
         for(let essay of data.data) {
             expect(essay.topicId).toEqual("1")
         }

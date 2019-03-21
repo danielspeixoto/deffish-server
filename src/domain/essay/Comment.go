@@ -15,7 +15,7 @@ func (useCase Comment) Comment(essayId aggregates.Id, comment aggregates.Comment
 	if err != nil {
 		useCase.Presenter.OnError(err)
 	} else {
-		useCase.Presenter.OnSuccess()
+		useCase.Presenter.OnUploaded()
 	}
 }
 

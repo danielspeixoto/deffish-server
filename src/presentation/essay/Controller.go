@@ -4,6 +4,7 @@ import (
 	"deffish-server/src/aggregates"
 	boundary "deffish-server/src/boundary/essay"
 	"encoding/json"
+	"errors"
 	"github.com/gin-gonic/gin"
 	"io/ioutil"
 	"log"
@@ -38,8 +39,9 @@ func (ctrl Controller) Comment(c *gin.Context)  {
 		panic(err)
 	}
 
-	id := c.Param("essayId")
-	ctrl.CommentUseCase.Comment(aggregates.Id{id}, comment)
+	id := c.Param("id")
+	if id == "" { panic(errors.New("essay id is empty")) }
+	ctrl.CommentUseCase.Comment(aggregates.Id{id}, fromRequestToComment(comment))
 }
 
 
