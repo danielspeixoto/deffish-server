@@ -33,7 +33,7 @@ type IUploadUseCase interface {
 }
 
 type IUploadPresenter interface {
-	OnUploaded()
+	OnUploaded(id aggregates.Id)
 	OnError(error)
 }
 
@@ -47,7 +47,7 @@ type IFilterByTopicUseCase interface {
 }
 
 type ICommentPresenter interface {
-	OnUploaded()
+	OnUploaded(id aggregates.Id)
 	OnError(error)
 }
 

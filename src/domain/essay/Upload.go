@@ -14,12 +14,12 @@ type Upload struct {
 var _ essay.IUploadUseCase = (*Upload)(nil)
 
 func (useCase Upload) Upload(question aggregates.Essay) {
-	_, err := useCase.Repo.Insert(question)
+	id, err := useCase.Repo.Insert(question)
 	if err != nil {
 		log.Print(err)
 		useCase.Presenter.OnError(
 			errors.New("could not insert"))
 	} else {
-		useCase.Presenter.OnUploaded()
+		useCase.Presenter.OnUploaded(id)
 	}
 }

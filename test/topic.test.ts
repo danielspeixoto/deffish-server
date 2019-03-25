@@ -1,5 +1,6 @@
 import axios from "axios";
 import {getBaseURL} from "./constants";
+import {log} from "util";
 
 const fs = require("fs").promises;
 
@@ -37,15 +38,21 @@ describe("Inserts and manipulates topics", () => {
     })
 
     it("Retrieve topic using id", async () => {
-        const initialResp = await  axios.get(url + "?mode=random")
+        const initialResp = await axios.post(url, {
+            "title":  "e",
+            "contents": [
+                "A", "a",
+            ],
+        })
         const initialData = initialResp.data
-        const id = initialData.data[0].id
-        const title = initialData.data[0].title
+        console.log(initialData)
+        const id = initialData.data.id
 
         const resp = await axios.get(url + "/" + id)
         const data = resp.data
         expect(resp.status).toBe(200)
-        expect(data.data.title).toEqual(title)
+        expect(data.data.title).toEqual("e")
+        expect(data.data.contents).toEqual(["A", "a"])
     })
 
 })

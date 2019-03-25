@@ -33,9 +33,9 @@ func (presenter Presenter) OnListReceived(topics []aggregates.Topic) {
 	if err != nil { panic(err) }
 }
 
-func (presenter Presenter) OnUploaded() {
+func (presenter Presenter) OnUploaded(id aggregates.Id) {
 	presenter.Writer.WriteHeader(http.StatusCreated)
-	err := json.NewEncoder(presenter.Writer).Encode(data.Response{Status: "ok"})
+	err := json.NewEncoder(presenter.Writer).Encode(data.Response{Status: "ok", Data: data.Id{id.Value}})
 	if err != nil { panic(err) }
 }
 

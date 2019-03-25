@@ -3,7 +3,7 @@ import {getBaseURL} from "./constants";
 
 const fs = require("fs").promises;
 
-const relativePath = "/question"
+const relativePath = "/questions"
 const url = getBaseURL() + relativePath
 
 describe("Inserts and manipulates questions", () => {

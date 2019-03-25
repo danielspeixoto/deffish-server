@@ -32,6 +32,6 @@ type IUploadUseCase interface {
 }
 
 type IUploadPresenter interface {
-	OnUploaded()
+	OnUploaded(id aggregates.Id)
 	OnError(error)
 }
