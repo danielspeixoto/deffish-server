@@ -4,6 +4,7 @@ import (
 	"deffish-server/src/aggregates"
 	"deffish-server/src/domain/question"
 	"encoding/json"
+	"errors"
 	"github.com/gin-gonic/gin"
 	"io/ioutil"
 	"log"
@@ -12,9 +13,10 @@ import (
 )
 
 type Controller struct {
-	UploadUseCase question.IUploadUseCase
-	RandomUseCase question.IRandomUseCase
-	GetById question.IByIdUseCase
+	UploadUseCase       question.IUploadUseCase
+	RandomTagsUseCase   question.IRandomByTagsUseCase
+	RandomDomainUseCase question.IRandomByDomainUseCase
+	GetById             question.IByIdUseCase
 }
 
 func (ctrl Controller) Upload(request *http.Request) {
@@ -32,7 +34,28 @@ func (ctrl Controller) Upload(request *http.Request) {
 		fromRequestToQuestion(question))
 }
 
-func (ctrl Controller) Random(request *http.Request) {
+func (ctrl Controller) RandomByDomain(request *http.Request) {
+	params := request.URL.Query()
+
+	amountParam, ok := params["amount"]
+	if !ok || len(amountParam[0]) < 1 {
+		amountParam = []string{"2"}
+	}
+
+	domainParam, ok := params["domain"]
+	if !ok || len(domainParam[0]) < 1 {
+		panic(errors.New("domain not specified on query"))
+	}
+
+	amount, err := strconv.Atoi(amountParam[0])
+	if err != nil {
+		panic(err)
+	}
+
+	ctrl.RandomDomainUseCase.Random(amount, domainParam[0])
+}
+
+func (ctrl Controller) RandomByTags(request *http.Request) {
 	params := request.URL.Query()
 
 	amountParam, ok := params["amount"]
@@ -45,19 +68,14 @@ func (ctrl Controller) Random(request *http.Request) {
 		tagsParam = []string{}
 	}
 
-	var tags []aggregates.Tag
-	for _, element := range tagsParam {
-		tags = append(tags, aggregates.Tag{
-			Name: element,
-		})
-	}
-
 	amount, err := strconv.Atoi(amountParam[0])
 	if err != nil {
 		panic(err)
 	}
 
-	ctrl.RandomUseCase.Random(amount, tags)
+	print(tagsParam)
+
+	ctrl.RandomTagsUseCase.Random(amount, tagsParam)
 }
 
 func (ctrl Controller) QuestionById(c *gin.Context)  {

@@ -6,12 +6,17 @@ import (
 
 type IRepository interface {
 	Insert(aggregates.Question) (aggregates.Id, error)
-	Random(amount int, tags []aggregates.Tag) ([]aggregates.Question, error)
+	RandomByDomain(amount int, domain string) ([]aggregates.Question, error)
+	RandomByTags(amount int, tags []string) ([]aggregates.Question, error)
 	Id(id aggregates.Id) (aggregates.Question, error)
 }
 
-type IRandomUseCase interface {
-	Random(amount int, tags []aggregates.Tag)
+type IRandomByDomainUseCase interface {
+	Random(amount int, domain string)
+}
+
+type IRandomByTagsUseCase interface {
+	Random(amount int, tags []string)
 }
 
 type IRandomPresenter interface {

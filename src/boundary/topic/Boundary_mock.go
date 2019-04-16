@@ -63,19 +63,19 @@ func (mr *MockIRepositoryMockRecorder) Id(id interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Id", reflect.TypeOf((*MockIRepository)(nil).Id), id)
 }
 
-// Random mocks base method
+// random mocks base method
 func (m *MockIRepository) Random(amount int) ([]aggregates.Topic, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Random", amount)
+	ret := m.ctrl.Call(m, "random", amount)
 	ret0, _ := ret[0].([]aggregates.Topic)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// Random indicates an expected call of Random
+// random indicates an expected call of random
 func (mr *MockIRepositoryMockRecorder) Random(amount interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Random", reflect.TypeOf((*MockIRepository)(nil).Random), amount)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "random", reflect.TypeOf((*MockIRepository)(nil).Random), amount)
 }
 
 // MockIRandomUseCase is a mock of IRandomUseCase interface
@@ -101,16 +101,16 @@ func (m *MockIRandomUseCase) EXPECT() *MockIRandomUseCaseMockRecorder {
 	return m.recorder
 }
 
-// Random mocks base method
+// random mocks base method
 func (m *MockIRandomUseCase) Random(amount int) {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "Random", amount)
+	m.ctrl.Call(m, "random", amount)
 }
 
-// Random indicates an expected call of Random
+// random indicates an expected call of random
 func (mr *MockIRandomUseCaseMockRecorder) Random(amount interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Random", reflect.TypeOf((*MockIRandomUseCase)(nil).Random), amount)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "random", reflect.TypeOf((*MockIRandomUseCase)(nil).Random), amount)
 }
 
 // MockIRandomPresenter is a mock of IRandomPresenter interface

@@ -2,6 +2,7 @@ package essay
 
 import (
 	"deffish-server/src/aggregates"
+	"deffish-server/src/presentation/data"
 	"encoding/json"
 	"github.com/pkg/errors"
 	"net/http"
@@ -13,14 +14,14 @@ import (
 func TestPresenter_OnEssayUploaded(t *testing.T) {
 	recorder := httptest.NewRecorder()
 	presenter := Presenter{Writer: recorder}
-	presenter.OnUploaded()
+	presenter.OnUploaded(aggregates.Id{"myId"})
 
 	if status := recorder.Code; status != http.StatusCreated {
 		t.Errorf("handler returned wrong status code: got %v want %v",
 			status , http.StatusCreated)
 	}
 
-	expected := `{"status":"ok","data":null}`
+	expected := `{"status":"ok","data":{"id": "myId"}}`
 	body := strings.TrimRight(recorder.Body.String(), "\n")
 	if body != expected {
 		t.Errorf("handler returned unexpected body:\n got  %v want %v",

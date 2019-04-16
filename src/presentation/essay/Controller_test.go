@@ -58,7 +58,7 @@ func TestRouter(t *testing.T) {
 
 	})
 
-	t.Run("Random", func(t *testing.T) {
+	t.Run("random", func(t *testing.T) {
 
 		random.EXPECT().Random(2)
 		_, err := http.Get(url + "?amount=2&mode=random")

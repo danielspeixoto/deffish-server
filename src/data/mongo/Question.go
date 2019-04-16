@@ -3,7 +3,6 @@ package mongo
 import (
 	"context"
 	"deffish-server/src/aggregates"
-	"deffish-server/src/helpers"
 	"deffish-server/src/domain/question"
 	"github.com/mongodb/mongo-go-driver/bson"
 	"github.com/mongodb/mongo-go-driver/bson/primitive"
@@ -20,9 +19,13 @@ var _ question.IRepository = (*QuestionRepository)(nil)
 
 type Question struct {
 	Id primitive.ObjectID `bson:"_id,omitempty"`
-	PDF []byte `bson:"pdf"`
+	Image []byte `bson:"image"`
+	Source string `bson:"source"`
+	Variant string `bson:"variant"`
+	Edition int `bson:"edition"`
+	Number int `bson:"number"`
 	Answer int `bson:"answer"`
-	Choices []string `bson:"choices"`
+	Domain string `bson:"domain"`
 	Tags []string `bson:"tags"`
 }
 
@@ -39,7 +42,7 @@ func (repo QuestionRepository) Insert(question aggregates.Question) (aggregates.
 	id := aggregates.Id{
 		Value: res.InsertedID.(primitive.ObjectID).Hex(),
 	}
-	log.Printf("question with id %s inserted", id.Value)
+	log.Printf("testQuestion with id %s inserted", id.Value)
 	return id,  nil
 }
 
@@ -69,27 +72,40 @@ func (repo QuestionRepository) Id(id aggregates.Id) (aggregates.Question, error)
 	return fromMongoToQuestion(mongoQuestion), nil
 }
 
-func (repo QuestionRepository) Random(amount int, tags []aggregates.Tag) ([]aggregates.Question, error) {
+func (repo QuestionRepository) random(field string, value []string, amount int) (mongo.Cursor, error) {
 	ctx, _ := context.WithTimeout(context.Background(), 10 * time.Second)
 
 	agg := bson.D{
 		{"", bson.M{
 			"$match": bson.M{
-				"tags": bson.M{
-					"$all": helpers.TagsToStringArray(tags),
+				field: bson.M{
+					"$all": value,
 				},
 			},
 		}},
 		{"", bson.M{ "$sample": bson.M{"size": amount} }},
 	}
 
-	if len(tags) == 0 {
+
+	if len(value) == 0 {
 		agg = bson.D{
-			{"", bson.M{ "$sample": bson.M{"size": amount} }},
+			{"", bson.M{"$sample": bson.M{"size": amount}}},
 		}
 	}
 
-	cursor, err := repo.questions.Aggregate(ctx, agg)
+
+
+	return repo.questions.Aggregate(ctx, agg)
+}
+
+func (repo QuestionRepository) RandomByDomain(amount int, domain string) ([]aggregates.Question, error) {
+	cursor, err := repo.random("domain", []string{domain}, amount)
+	if err != nil { return nil, err }
+	return fromCursorToQuestions(cursor)
+}
+
+func (repo QuestionRepository) RandomByTags(amount int, tags []string) ([]aggregates.Question, error) {
+	cursor, err := repo.random("tags", tags, amount)
 	if err != nil { return nil, err }
 	return fromCursorToQuestions(cursor)
 }
@@ -108,37 +124,32 @@ func fromCursorToQuestions(cursor mongo.Cursor) ([]aggregates.Question, error) {
 }
 
 func fromMongoToQuestion(doc Question) aggregates.Question {
-	var choices []aggregates.Choice
-	for _, element := range doc.Choices {
-		choices = append(choices, aggregates.Choice{
-			Content: element,
-		})
-	}
-
-	var tags []aggregates.Tag
-	for _, element := range doc.Tags {
-		tags = append(tags, aggregates.Tag{
-			Name: element,
-		})
-	}
 	return aggregates.Question{
-		Id: aggregates.Id {
+		Id: aggregates.Id{
 			Value: doc.Id.Hex(),
 		},
-		PDF: aggregates.PDF{
-			Content: doc.PDF,
+		Image:   aggregates.Image{
+			doc.Image,
 		},
-		Answer: doc.Answer,
-		Tags:tags,
-		Choices:choices,
+		Source:  doc.Source,
+		Variant: doc.Variant,
+		Edition: doc.Edition,
+		Number:  doc.Number,
+		Domain:  doc.Domain,
+		Answer:  doc.Answer,
+		Tags:    doc.Tags,
 	}
 }
 
 func toMongoQuestion(question aggregates.Question) Question {
 	return Question{
-		PDF: question.PDF.Content,
-		Answer: question.Answer,
-		Choices: helpers.ChoicesToStringArray(question.Choices),
-		Tags: helpers.TagsToStringArray(question.Tags),
+		Image:   question.Image.Contents,
+		Source:  question.Source,
+		Variant: question.Variant,
+		Edition: question.Edition,
+		Number:  question.Number,
+		Answer:  question.Answer,
+		Domain:  question.Domain,
+		Tags:    question.Tags,
 	}
 }

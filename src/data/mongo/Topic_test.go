@@ -58,7 +58,7 @@ func TextTopic_ManyItems(t *testing.T) {
 			if err != nil { t.Fatal(err) }
 		}
 
-		t.Run("Random should give different results each time is run", func(t *testing.T) {
+		t.Run("random should give different results each time is run", func(t *testing.T) {
 			var randomTopics []aggregates.Topic
 			for i := 0; i < 10; i++ {
 				questions, err := topicRepo.Random(1)
@@ -82,13 +82,13 @@ func TextTopic_ManyItems(t *testing.T) {
 			}
 		})
 
-		t.Run("Random without tags should retrieve all", func(t *testing.T) {
+		t.Run("random without tags should retrieve all", func(t *testing.T) {
 
 			questions, err := topicRepo.Random(100)
 			if err != nil { t.Fatal(err) }
 
 			if len(questions) != 5 {
-				t.Errorf("Random should return all questions. " +
+				t.Errorf("random should return all questions. " +
 					"Expected: %v, Got: %v", 5, len(questions))
 			}
 		})

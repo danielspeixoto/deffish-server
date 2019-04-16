@@ -11,11 +11,3 @@ type Title struct {
 type Text struct {
 	Value string
 }
-
-type Tag struct {
-	Name string
-}
-
-type PDF struct {
-	Content []byte
-}

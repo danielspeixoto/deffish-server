@@ -1,24 +1,45 @@
 package question
 
 import (
-	"deffish-server/src/aggregates"
 	"log"
 )
 
-type Random struct {
+type RandomByDomain struct {
 	Repo IRepository
 	Presenter IRandomPresenter
 	MaxQuestions int
 }
 
-var _ IRandomUseCase = (*Random)(nil)
+var _ IRandomByDomainUseCase = (*RandomByDomain)(nil)
 
-func (useCase Random) Random(amount int, tags []aggregates.Tag) {
+func (useCase RandomByDomain) Random(amount int, domain string) {
 	if amount > useCase.MaxQuestions {
 		log.Printf("An user requested %v questions, max is %v", amount, useCase.MaxQuestions)
 		amount = useCase.MaxQuestions
 	}
-	questions, err := useCase.Repo.Random(amount, tags)
+	questions, err := useCase.Repo.RandomByDomain(amount, domain)
+	if err != nil {
+		log.Print(err)
+		useCase.Presenter.OnError(err)
+	} else {
+		useCase.Presenter.OnListReceived(questions)
+	}
+}
+
+type RandomByTags struct {
+	Repo IRepository
+	Presenter IRandomPresenter
+	MaxQuestions int
+}
+
+var _ IRandomByTagsUseCase = (*RandomByTags)(nil)
+
+func (useCase RandomByTags) Random(amount int, tags []string) {
+	if amount > useCase.MaxQuestions {
+		log.Printf("An user requested %v questions, max is %v", amount, useCase.MaxQuestions)
+		amount = useCase.MaxQuestions
+	}
+	questions, err := useCase.Repo.RandomByTags(amount, tags)
 	if err != nil {
 		log.Print(err)
 		useCase.Presenter.OnError(err)

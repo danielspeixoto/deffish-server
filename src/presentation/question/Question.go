@@ -2,49 +2,46 @@ package question
 
 import (
 	"deffish-server/src/aggregates"
-	"deffish-server/src/helpers"
 )
 
 type Question struct {
 	Id string `json:"id"`
-	PDF     []byte `json:"pdf"`
+	Image     []byte `json:"image"`
+	Source string `json:"source"`
+	Variant string `json:"variant"`
+	Edition int `json:"edition"`
+	Number int `json:"number"`
+	Domain string `json:"domain"`
 	Answer  int `json:"answer"`
-	Choices []string `json:"choices"`
 	Tags    []string `json:"tags"`
 }
 
 func fromRequestToQuestion(question Question) aggregates.Question {
-	var choices []aggregates.Choice
-	for _, element := range question.Choices {
-		choices = append(choices, aggregates.Choice{
-			Content: element,
-		})
-	}
-
-	var tags []aggregates.Tag
-	for _, element := range question.Tags {
-		tags = append(tags, aggregates.Tag{
-			Name: element,
-		})
-	}
-
 	return aggregates.Question{
-		PDF: aggregates.PDF{
-			Content: question.PDF,
+		Image: aggregates.Image{
+			question.Image,
 		},
+		Source: question.Source,
+		Variant: question.Variant,
+		Edition: question.Edition,
+		Number: question.Number,
+		Domain: question.Domain,
 		Answer: question.Answer,
-		Choices: choices,
-		Tags: tags,
+		Tags: question.Tags,
 	}
 }
 
 func fromQuestionToJson(question aggregates.Question) Question {
 	return Question{
 		Id: question.Id.Value,
-		PDF: question.PDF.Content,
+		Image: question.Image.Contents,
+		Source: question.Source,
+		Variant: question.Variant,
+		Edition: question.Edition,
+		Number: question.Number,
+		Domain: question.Domain,
 		Answer: question.Answer,
-		Choices: helpers.ChoicesToStringArray(question.Choices),
-		Tags: helpers.TagsToStringArray(question.Tags),
+		Tags: question.Tags,
 	}
 }
 

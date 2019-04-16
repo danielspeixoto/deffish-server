@@ -1,13 +1,13 @@
 package aggregates
 
-type Choice struct {
-	Content string
-}
-
 type Question struct {
 	Id
-	PDF
+	Image
+	Source string
+	Variant string
+	Edition int
+	Number int
+	Domain string
 	Answer  int
-	Choices []Choice
-	Tags    []Tag
+	Tags []string
 }

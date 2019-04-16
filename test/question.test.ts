@@ -15,25 +15,25 @@ describe("Inserts and manipulates questions", () => {
 
         for(const i in ["a", "b", "c", "d"]) {
             const q = {
-                "pdf": data,
+                "image": data,
                 "answer": 0,
-                "choices": ["A", "B", "C"],
-                "tags": [i, "ENEM"]
+                "tags": [i, "ENEM"],
+                "domain": i.toString()
             }
             const resp = await axios.post(url, q)
             expect(resp.status).toBe(201)
         }
         const resp = await axios.post(url, {
-            "pdf": data,
+            "image": data,
             "answer": 1,
-            "choices": ["A", "B", "C"],
-            "tags": ["0", "OTHER"]
+            "tags": ["0", "OTHER"],
+            "domain": "0"
         })
         expect(resp.status).toBe(201)
     })
 
     it("Retrieve random questions filtering by one tag", async () => {
-        const resp = await  axios.get(url + "?mode=random&amount=5&tags[]=0")
+        const resp = await  axios.get(url + "?amount=5&tags[]=0")
         const data = resp.data
         expect(resp.status).toBe(200)
         expect(data.data.length).toBe(2)
@@ -42,7 +42,7 @@ describe("Inserts and manipulates questions", () => {
     })
 
     it("Retrieve random questions filtering by two tags", async () => {
-        const resp = await  axios.get(url + "?mode=random&amount=5&tags[]=0&tags[]=ENEM")
+        const resp = await  axios.get(url + "?amount=5&tags[]=0&tags[]=ENEM")
         const data = resp.data
         expect(resp.status).toBe(200)
         expect(data.data.length).toBe(1)
@@ -50,7 +50,7 @@ describe("Inserts and manipulates questions", () => {
     })
 
     it("Retrieve question using id", async () => {
-        const initialResp = await  axios.get(url + "?mode=random&amount=5&tags[]=0&tags[]=ENEM")
+        const initialResp = await  axios.get(url + "?amount=5&tags[]=0&tags[]=ENEM")
         const initialData = initialResp.data
         const id = initialData.data[0].id
 
