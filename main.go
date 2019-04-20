@@ -6,6 +6,7 @@ import (
 	"deffish-server/src/presentation"
 	"deffish-server/src/presentation/question"
 	"deffish-server/src/presentation/status"
+	"deffish-server/src/presentation/tag"
 	"deffish-server/src/presentation/topic"
 	"fmt"
 	"log"
@@ -33,6 +34,7 @@ func main() {
 		essay.GetRouter(repo.Essays),
 		status.Router{},
 		question.Router{Repo: repo.Questions},
+		tag.NewRouter(repo.Tags),
 		config.Port)
 }
 

@@ -1,56 +1,25 @@
-package essay
+package tag
 
-import "deffish-server/src/aggregates"
+import (
+	"deffish-server/src/aggregates"
+)
 
 type IRepository interface {
-	Insert(essay aggregates.Essay) (aggregates.Id, error)
-	Id(id aggregates.Id) (aggregates.Essay, error)
-	FilterByTopic(aggregates.Id) ([]aggregates.Essay, error)
-	Comment(essayId aggregates.Id, comment aggregates.Comment) error
-	Random(amount int) ([]aggregates.Essay, error)
+	Insert(aggregates.Tag) (aggregates.Id, error)
+	GetByName(string) (aggregates.Tag, error)
+	SuggestionsBySubStr(string) ([]aggregates.Tag, error)
 }
 
-type IRandomUseCase interface {
-	Random(amount int)
+
+type IByNameUseCase interface {
+	ByName(name string) (aggregates.Tag, error)
 }
 
-type IRandomPresenter interface {
-	OnListReceived([]aggregates.Essay)
-	OnError(error)
-}
-
-type IByIdUseCase interface {
-	Id(id aggregates.Id)
-}
-
-type IByIdPresenter interface {
-	OnReceived(aggregates.Essay)
-	OnError(error)
-}
 
 type IUploadUseCase interface {
-	Upload(aggregates.Essay)
+	Upload(aggregates.Tag) (aggregates.Id, error)
 }
 
-type IUploadPresenter interface {
-	OnUploaded(id aggregates.Id)
-	OnError(error)
-}
-
-type IFilterByTopicPresenter interface {
-	OnListReceived([]aggregates.Essay)
-	OnError(error)
-}
-
-type IFilterByTopicUseCase interface {
-	FilterByTopic(aggregates.Id)
-}
-
-type ICommentPresenter interface {
-	OnUploaded(id aggregates.Id)
-	OnError(error)
-}
-
-type ICommentUseCase interface {
-	Comment(essayId aggregates.Id, comment aggregates.Comment)
+type ISuggestionsBySubStr interface {
+	GetSuggestions(string) ([]aggregates.Tag, error)
 }

@@ -46,7 +46,7 @@ func TestRouter(t *testing.T) {
 	}()
 
 
-	t.Run("Upload", func(t *testing.T) {
+	t.Run("Post", func(t *testing.T) {
 
 		upload.EXPECT().Upload(gomock.Eq(example))
 		_, err := http.Post(
