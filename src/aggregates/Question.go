@@ -2,7 +2,7 @@ package aggregates
 
 type Question struct {
 	Id
-	Image
+	PDF
 	Source string
 	Variant string
 	Edition int

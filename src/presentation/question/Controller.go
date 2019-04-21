@@ -26,7 +26,7 @@ func (ctrl Controller) Upload(request *http.Request) {
 	var question Question
 	err = json.Unmarshal(bodyBytes, &question)
 	if err != nil {
-		log.Printf("request body of failed json parsing: %s", request.Body)
+		log.Printf("request body of failed json parsing: %s", string(bodyBytes))
 		panic(err)
 	}
 

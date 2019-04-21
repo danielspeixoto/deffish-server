@@ -1,5 +1,5 @@
 package aggregates
 
-type Image struct {
+type PDF struct {
 	Contents []byte
 }

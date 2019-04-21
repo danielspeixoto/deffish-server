@@ -8,7 +8,7 @@ import (
 )
 
 var testQuestion = aggregates.Question{
-	Image: aggregates.Image{
+	PDF: aggregates.PDF{
 		[]byte{0, 0, 1},
 	},
 	Source:  "enem",
@@ -66,12 +66,12 @@ func TestQuestionManyItems(t *testing.T) {
 
 		for i := 0; i < 5; i++ {
 			question := aggregates.Question{
-				Image:   aggregates.Image{},
-				Source: "enem",
+				PDF:     aggregates.PDF{},
+				Source:  "enem",
 				Variant: "AMARELO",
 				Edition: 2017,
-				Number: 3,
-				Domain: "other",
+				Number:  3,
+				Domain:  "other",
 				Tags:    []string {
 					strconv.Itoa(i),
 					"other",
@@ -84,14 +84,14 @@ func TestQuestionManyItems(t *testing.T) {
 
 		for i := 0; i < 5; i++ {
 			question := aggregates.Question{
-				Image:   aggregates.Image{},
-				Source: "enem",
+				PDF:     aggregates.PDF{},
+				Source:  "enem",
 				Variant: "AMARELO",
 				Edition: 2017,
-				Number: 3,
-				Domain: "none",
+				Number:  3,
+				Domain:  "none",
 				Tags:    []string {},
-				Answer: i + 10,
+				Answer:  i + 10,
 			}
 			_, err := questionRepo.Insert(question)
 			if err != nil { t.Fatal(err) }

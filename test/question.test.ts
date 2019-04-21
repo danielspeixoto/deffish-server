@@ -15,7 +15,7 @@ describe("Inserts and manipulates questions", () => {
 
         for(const i in ["a", "b", "c", "d"]) {
             const q = {
-                "image": data,
+                "pdf": data,
                 "answer": 0,
                 "tags": [i, "ENEM"],
                 "domain": i.toString()
@@ -24,7 +24,7 @@ describe("Inserts and manipulates questions", () => {
             expect(resp.status).toBe(201)
         }
         const resp = await axios.post(url, {
-            "image": data,
+            "pdf": data,
             "answer": 1,
             "tags": ["0", "OTHER"],
             "domain": "0"

@@ -18,15 +18,15 @@ type QuestionRepository struct {
 var _ question.IRepository = (*QuestionRepository)(nil)
 
 type Question struct {
-	Id primitive.ObjectID `bson:"_id,omitempty"`
-	Image []byte `bson:"image"`
-	Source string `bson:"source"`
-	Variant string `bson:"variant"`
-	Edition int `bson:"edition"`
-	Number int `bson:"number"`
-	Answer int `bson:"answer"`
-	Domain string `bson:"domain"`
-	Tags []string `bson:"tags"`
+	Id      primitive.ObjectID `bson:"_id,omitempty"`
+	PDF     []byte             `bson:"pdf"`
+	Source  string             `bson:"source"`
+	Variant string             `bson:"variant"`
+	Edition int                `bson:"edition"`
+	Number  int                `bson:"number"`
+	Answer  int                `bson:"answer"`
+	Domain  string             `bson:"domain"`
+	Tags    []string           `bson:"tags"`
 }
 
 func NewQuestionRepository(questions *mongo.Collection) *QuestionRepository {
@@ -128,8 +128,8 @@ func fromMongoToQuestion(doc Question) aggregates.Question {
 		Id: aggregates.Id{
 			Value: doc.Id.Hex(),
 		},
-		Image:   aggregates.Image{
-			doc.Image,
+		PDF:   aggregates.PDF{
+			doc.PDF,
 		},
 		Source:  doc.Source,
 		Variant: doc.Variant,
@@ -143,7 +143,7 @@ func fromMongoToQuestion(doc Question) aggregates.Question {
 
 func toMongoQuestion(question aggregates.Question) Question {
 	return Question{
-		Image:   question.Image.Contents,
+		PDF:     question.PDF.Contents,
 		Source:  question.Source,
 		Variant: question.Variant,
 		Edition: question.Edition,
