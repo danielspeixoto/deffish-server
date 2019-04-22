@@ -14,6 +14,7 @@ type Repository struct {
 	Topics *TopicRepository
 	Essays *EssayRepository
 	Tags *TagRepository
+	RelatedVideos *RelatedVideoRepository
 }
 
 func NewRepository(
@@ -31,6 +32,7 @@ func NewRepository(
 		&TopicRepository{db.Collection("topic")},
 		&EssayRepository{db.Collection("essay")},
 		&TagRepository{db.Collection("tag")},
+		&RelatedVideoRepository{db.Collection("relatedVideos")},
 	}
 }
 

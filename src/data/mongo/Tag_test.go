@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func TestTagOneItem(t *testing.T) {
+func TestTagManyItems(t *testing.T) {
 	tag := aggregates.Tag{
 		Name: "mytag",
 	}
