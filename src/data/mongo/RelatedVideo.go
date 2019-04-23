@@ -4,6 +4,7 @@ import (
 	"context"
 	"deffish-server/src/aggregates"
 	"deffish-server/src/boundary/relatedVideo"
+	"github.com/mongodb/mongo-go-driver/bson"
 	"github.com/mongodb/mongo-go-driver/bson/primitive"
 	"github.com/mongodb/mongo-go-driver/mongo"
 	"time"
@@ -39,7 +40,30 @@ type RelatedVideo struct {
 }
 
 func (repo RelatedVideoRepository) FilterByQuestion(id aggregates.Id, start int, count int) ([]aggregates.RelatedVideo, error) {
-	panic("implement me")
+	ctx, _ := context.WithTimeout(context.Background(), 1 * time.Second)
+	objId, err := primitive.ObjectIDFromHex(id.Value)
+	if err != nil {
+		return []aggregates.RelatedVideo{}, err
+	}
+
+	agg := bson.D{
+		{"", bson.M{
+			"$match": bson.M{
+				"questionId": objId,
+			},
+		}},
+		{"", bson.M{ "$sort": bson.M{
+			"retrievalPosition": 1,
+		} }},
+		{"", bson.M{ "$skip": start }},
+		{"", bson.M{ "$limit": count }},
+	}
+
+	cursor, err := repo.collection.Aggregate(ctx, agg)
+	if err != nil {
+		return []aggregates.RelatedVideo{}, err
+	}
+	return fromCursorToRelatedVideos(cursor)
 }
 
 func (repo RelatedVideoRepository) drop() {
@@ -47,7 +71,7 @@ func (repo RelatedVideoRepository) drop() {
 }
 
 func fromCursorToRelatedVideos(cursor mongo.Cursor) ([]aggregates.RelatedVideo, error) {
-	ctx, _ := context.WithTimeout(context.Background(), 1*time.Second)
+	ctx, _ := context.WithTimeout(context.Background(), 1 * time.Second)
 	defer cursor.Close(ctx)
 	var items []aggregates.RelatedVideo
 	for cursor.Next(ctx) {
