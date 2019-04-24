@@ -28,5 +28,5 @@ func (handler Router) Route(router *gin.RouterGroup) {
 	router.POST("/", handler.ctrl.Upload)
 	router.GET("/", handler.ctrl.RandomByTags)
 	router.GET("/:id/relatedVideos", handler.ctrl.RelatedVideos)
-	router.GET("/:id", handler.ctrl.QuestionById)
+	router.GET("/:id/", handler.ctrl.QuestionById)
 }
