@@ -1,26 +1,29 @@
 package question
 
-import "deffish-server/src/aggregates"
+import (
+	"deffish-server/src/aggregates"
+	"github.com/mongodb/mongo-go-driver/bson/primitive"
+)
 
 type Channel struct {
-	Title string
-	Id string
+	Title string `json:"title"`
+	Id    string `json:"id"`
 }
 
 type Thumbnails struct {
-	HighResolution string
-	DefaultResolution string
-	MediumResolution string
+	HighResolution    string `json:"high"`
+	DefaultResolution string `json:"default"`
+	MediumResolution  string `json:"medium"`
 }
 
 type RelatedVideo struct {
-	Id string
-	Title string
-	Description string
-	Thumbnails
-	Channel
-	VideoId string
-	QuestionId string
+	Id                string `json:"id"`
+	Title             string             `json:"title"`
+	Description       string `json:"description"`
+	Thumbnails        `json:"thumbnails"`
+	Channel           `json:"channel"`
+	VideoId string `json:"videoId"`
+	QuestionId        string `json:"questionId"`
 }
 
 func fromRelatedVideosToJsonArray(relatedVideos []aggregates.RelatedVideo) []RelatedVideo {
