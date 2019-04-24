@@ -2,7 +2,6 @@ package question
 
 import (
 	"deffish-server/src/aggregates"
-	"github.com/mongodb/mongo-go-driver/bson/primitive"
 )
 
 type Channel struct {
@@ -28,7 +27,7 @@ type RelatedVideo struct {
 
 func fromRelatedVideosToJsonArray(relatedVideos []aggregates.RelatedVideo) []RelatedVideo {
 	jsons := make([]RelatedVideo, len(relatedVideos))
-	for q := range relatedVideos {
+	for _, q := range relatedVideos {
 		jsons = append(jsons, fromRelatedVideoToJson(q))
 	}
 	return jsons

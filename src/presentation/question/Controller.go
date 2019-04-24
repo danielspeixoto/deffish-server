@@ -103,7 +103,15 @@ func (ctrl Controller) RelatedVideos(c *gin.Context) {
 	if amount == "" || start == "" || id == "" {
 		panic(errors.New("not all params supplied"))
 	}
-	v, err := ctrl.Videos.FilterByQuestion(aggregates.Id{id}, start, amount)
+	startInt, err := strconv.Atoi(start)
+	if err != nil {
+		panic(err)
+	}
+	amountInt, err := strconv.Atoi(amount)
+	if err != nil {
+		panic(err)
+	}
+	v, err := ctrl.Videos.FilterByQuestion(aggregates.Id{id}, startInt, amountInt)
 	if err != nil {
 		panic(err)
 	}

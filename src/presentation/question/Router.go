@@ -1,47 +1,32 @@
 package question
 
 import (
-	"deffish-server/src/domain/question"
+	questionBoundary "deffish-server/src/boundary/question"
+	relatedVideoBoundary "deffish-server/src/boundary/relatedVideo"
+	questionDomain "deffish-server/src/domain/question"
+	relatedVideoDomain "deffish-server/src/domain/relatedVideo"
 	"github.com/gin-gonic/gin"
 )
 
 type Router struct {
-	Repo question.IRepository
+	ctrl Controller
+}
+
+func NewRouter(questionRepo questionBoundary.IRepository, videoRepo relatedVideoBoundary.IRepository) Router {
+	ctrl := Controller{
+		UploadUseCase: questionDomain.Upload{questionRepo},
+		RandomTagsUseCase: questionDomain.RandomByTags{questionRepo, 10},
+		GetById: questionDomain.ById{questionRepo},
+		Videos: relatedVideoDomain.FilterByQuestionUseCase{videoRepo},
+	}
+	return Router{
+		ctrl,
+	}
 }
 
 func (handler Router) Route(router *gin.RouterGroup) {
-	router.POST("/", handler.handle(upload))
-	router.GET("/", handler.handle(random))
-	router.GET("/:id", handler.handle(questionById))
-	router.GET("/:id/relatedVideos", )
-}
-
-func (handler Router) handle(callback func(Controller, *gin.Context)) func(c *gin.Context){
-	return func(c *gin.Context) {
-		callback(
-			newControllerDefaults(Presenter{
-				Writer: c.Writer,
-		}, handler.Repo), c)
-	}
-}
-
-func upload(ctrl Controller, ctx *gin.Context)       {
-	ctrl.Upload(ctx.Request)
-}
-func random(ctrl Controller, ctx *gin.Context)       {
-	ctrl.RandomByTags(ctx.Request)
-}
-
-func questionById(ctrl Controller, ctx *gin.Context) { ctrl.QuestionById(ctx) }
-
-func newControllerDefaults(presenter Presenter, repo question.IRepository) Controller {
-	uploadQuestion := question.Upload{Repo: repo, Presenter: presenter}
-	random := question.RandomByTags{Repo: repo, Presenter:presenter, MaxQuestions:10}
-	byId := question.ById{Repo:repo, Presenter:presenter}
-
-	return Controller{
-		UploadUseCase:     uploadQuestion,
-		RandomTagsUseCase: random,
-		GetById:           byId,
-	}
+	router.POST("/", handler.ctrl.Upload)
+	router.GET("/", handler.ctrl.RandomByTags)
+	router.GET("/:id/relatedVideos", handler.ctrl.RelatedVideos)
+	router.GET("/:id", handler.ctrl.QuestionById)
 }

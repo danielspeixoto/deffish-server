@@ -3,7 +3,7 @@ package mongo
 import (
 	"context"
 	"deffish-server/src/aggregates"
-	"deffish-server/src/domain/question"
+	"deffish-server/src/boundary/question"
 	"github.com/mongodb/mongo-go-driver/bson"
 	"github.com/mongodb/mongo-go-driver/bson/primitive"
 	"github.com/mongodb/mongo-go-driver/mongo"

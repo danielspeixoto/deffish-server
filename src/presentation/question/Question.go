@@ -18,7 +18,7 @@ type Question struct {
 
 func fromQuestionsToJsonArray(questions []aggregates.Question) []Question {
 	jsons := make([]Question, len(questions))
-	for q := range questions {
+	for _, q := range questions {
 		jsons = append(jsons, fromQuestionToJson(q))
 	}
 	return jsons
