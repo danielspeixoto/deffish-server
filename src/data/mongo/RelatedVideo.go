@@ -90,6 +90,9 @@ func fromMongoToRelatedVideo(doc RelatedVideo) aggregates.RelatedVideo {
 		Id: aggregates.Id{
 			Value: doc.Id.Hex(),
 		},
+		QuestionId: aggregates.Id{
+		Value: doc.QuestionId.Hex(),
+	},
 		Title:       doc.Title,
 		Description: doc.Description,
 		Thumbnail: aggregates.Thumbnail{
