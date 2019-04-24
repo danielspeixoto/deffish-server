@@ -16,6 +16,14 @@ type Question struct {
 	Tags    []string `json:"tags"`
 }
 
+func fromQuestionsToJsonArray(questions []aggregates.Question) []Question {
+	jsons := make([]Question, len(questions))
+	for q := range questions {
+		jsons = append(jsons, fromQuestionToJson(q))
+	}
+	return jsons
+}
+
 func fromRequestToQuestion(question Question) aggregates.Question {
 	return aggregates.Question{
 		PDF: aggregates.PDF{

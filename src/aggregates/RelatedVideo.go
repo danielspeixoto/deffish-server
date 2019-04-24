@@ -12,7 +12,7 @@ type Thumbnail struct {
 }
 
 type RelatedVideo struct {
-	Id Id
+	Id
 	Title string
 	Description string
 	Thumbnail

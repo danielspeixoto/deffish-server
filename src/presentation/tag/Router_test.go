@@ -17,9 +17,7 @@ var example = Tag{
 	Name: "mytag",
 }
 
-var exampleJson, _ = json.Marshal(map[string]interface{}{
-	"name": "mytag",
-})
+var exampleJson, _ = json.Marshal(example)
 
 func TestRouter(t *testing.T) {
 	port := "5001"
@@ -170,5 +168,4 @@ func TestRouter(t *testing.T) {
 			t.Errorf("Name is Different")
 		}
 	})
-
 }

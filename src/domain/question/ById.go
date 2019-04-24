@@ -2,22 +2,16 @@ package question
 
 import (
 	"deffish-server/src/aggregates"
-	"github.com/pkg/errors"
+	"deffish-server/src/boundary/question"
 )
 
 type ById struct {
-	Repo IRepository
-	Presenter IByIdPresenter
+	Repo question.IRepository
 }
 
-func (useCase ById) Id(id aggregates.Id) {
-	question, err := useCase.Repo.Id(id)
-	if err != nil {
-		useCase.Presenter.OnError(errors.New("Could not find"))
-	} else {
-		useCase.Presenter.OnReceived(question)
-	}
+func (useCase ById) Id(id aggregates.Id) (aggregates.Question, error){
+	return useCase.Repo.Id(id)
 }
 
-var _ IByIdUseCase = (*ById)(nil)
+var _ question.IByIdUseCase = (*ById)(nil)
 

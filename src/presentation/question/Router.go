@@ -13,6 +13,7 @@ func (handler Router) Route(router *gin.RouterGroup) {
 	router.POST("/", handler.handle(upload))
 	router.GET("/", handler.handle(random))
 	router.GET("/:id", handler.handle(questionById))
+	router.GET("/:id/relatedVideos", )
 }
 
 func (handler Router) handle(callback func(Controller, *gin.Context)) func(c *gin.Context){

@@ -2,23 +2,14 @@ package question
 
 import (
 	"deffish-server/src/aggregates"
-	"errors"
-	"log"
+	"deffish-server/src/boundary/question"
 )
 
 type Upload struct {
-	Repo IRepository
-	Presenter IUploadPresenter
+	Repo question.IRepository
 }
-var _ IUploadUseCase = (*Upload)(nil)
+var _ question.IUploadUseCase = (*Upload)(nil)
 
-func (useCase Upload) Upload(question aggregates.Question) {
-	_, err := useCase.Repo.Insert(question)
-	if err != nil {
-		log.Print(err)
-		useCase.Presenter.OnError(
-			errors.New("could not insert"))
-	} else {
-		useCase.Presenter.OnUploaded()
-	}
+func (useCase Upload) Upload(question aggregates.Question) (aggregates.Id, error) {
+	return useCase.Repo.Insert(question)
 }
