@@ -88,7 +88,7 @@ func TextTopic_ManyItems(t *testing.T) {
 			if err != nil { t.Fatal(err) }
 
 			if len(questions) != 5 {
-				t.Errorf("random should return all questions. " +
+				t.Errorf("random should return all questionsCollection. " +
 					"Expected: %v, Got: %v", 5, len(questions))
 			}
 		})

@@ -9,19 +9,10 @@ var topicRepo = testRepo.Topics
 var questionRepo = testRepo.Questions
 var essayRepo = testRepo.Essays
 var tagRepo = testRepo.Tags
-var relatedVideosRepo = testRepo.RelatedVideos
 
 
 func TestMain(m *testing.M) {
-	dropAll()
+	testRepo.drop()
 	m.Run()
-	dropAll()
-}
-
-func dropAll() {
-	questionRepo.drop()
-	topicRepo.drop()
-	essayRepo.drop()
-	tagRepo.drop()
-	relatedVideosRepo.drop()
+	testRepo.drop()
 }

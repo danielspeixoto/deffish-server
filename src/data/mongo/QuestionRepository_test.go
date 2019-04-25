@@ -2,6 +2,7 @@ package mongo
 
 import (
 	"deffish-server/src/aggregates"
+	"github.com/mongodb/mongo-go-driver/bson/primitive"
 	"reflect"
 	"strconv"
 	"testing"
@@ -41,6 +42,18 @@ func TestQuestionOneItem(t *testing.T) {
 			testQuestion.Id = questions[0].Id
 			if !reflect.DeepEqual(questions[0], testQuestion) {
 				t.Fatal("Objects are different")
+			}
+		})
+
+		t.Run("Add Tag", func(t *testing.T) {
+			err := questionRepo.Add(id, "aTag")
+			if err != nil { t.Fatal(err) }
+
+			result, err := questionRepo.Id(id)
+			if err != nil { t.Fatal(err) }
+
+			if !reflect.DeepEqual(result.Tags, []string{"a", "b", "aTag"}) {
+				t.Fatal()
 			}
 		})
 	})
@@ -97,12 +110,12 @@ func TestQuestionManyItems(t *testing.T) {
 			if err != nil { t.Fatal(err) }
 		}
 
-		t.Run("random with domain should only retrieve questions with this domain", func(t *testing.T) {
+		t.Run("random with domain should only retrieve questionsCollection with this domain", func(t *testing.T) {
 			questions, err := questionRepo.RandomByDomain(100, "other")
 			if err != nil { t.Fatal(err) }
 
 			if len(questions) != 5 {
-				t.Errorf("random should return questions with domain. " +
+				t.Errorf("random should return questionsCollection with domain. " +
 					"Expected: %v, Got: %v", 5, len(questions))
 			}
 
@@ -133,12 +146,12 @@ func TestQuestionManyItems(t *testing.T) {
 			}
 		})
 
-		t.Run("RandomByTags with tags should only retrieve questions with those tags", func(t *testing.T) {
+		t.Run("RandomByTags with tags should only retrieve questionsCollection with those tags", func(t *testing.T) {
 			questions, err := questionRepo.RandomByTags(100, []string{"other"})
 			if err != nil { t.Fatal(err) }
 
 			if len(questions) != 5 {
-				t.Errorf("RandomByDomain should return questions with tag. " +
+				t.Errorf("RandomByDomain should return questionsCollection with tag. " +
 					"Expected: %v, Got: %v", 5, len(questions))
 			}
 
@@ -151,12 +164,102 @@ func TestQuestionManyItems(t *testing.T) {
 			if err != nil { t.Fatal(err) }
 
 			if len(questions) != 15 {
-				t.Errorf("RandomByDomain should return all questions. " +
+				t.Errorf("RandomByDomain should return all questionsCollection. " +
 					"Expected: %v, Got: %v", 15, len(questions))
 			}
 		})
 	})
 }
+
+func TestRelatedVideosManyItems(t *testing.T) {
+	mockId := "5cbe17832910520c3d84bcd1"
+	t.Run("Insert Many", func(t *testing.T) {
+		objId, err := primitive.ObjectIDFromHex(mockId)
+		if err != nil {
+			panic(err)
+		}
+		total := 10
+		for i := 0; i < total; i++ {
+			retrieve := i
+			if i <= 5 {
+				retrieve = 5 - i
+			}
+			_, err := insert(questionRepo.relatedVideosCollection, RelatedVideo{
+				QuestionId:        objId,
+				RetrievalPosition: retrieve,
+				Title:             strconv.Itoa(retrieve),
+				Channel: Channel{
+					Title: "c",
+					Id:    "1",
+				},
+				Thumbnails: Thumbnails{
+					High:    "a",
+					Default: "b",
+					Medium:  "c",
+				},
+				Description: "desc",
+				VideoId:     "1",
+			})
+			if err != nil {
+				panic(err)
+			}
+		}
+		_, err = insert(questionRepo.relatedVideosCollection, RelatedVideo{
+			QuestionId: primitive.ObjectID{
+				1, 1, 1, 1,
+				1, 1, 1, 1,
+				1, 1, 1, 1,
+			},
+			RetrievalPosition: 1,
+			Title:             "other",
+			Channel: Channel{
+				Title: "c",
+				Id:    "1",
+			},
+			Thumbnails: Thumbnails{
+				High:    "a",
+				Default: "b",
+				Medium:  "c",
+			},
+			Description: "desc",
+			VideoId:     "1",
+		})
+		if err != nil {
+			panic(err)
+		}
+
+		t.Run("Filter By Question", func(t *testing.T) {
+			videos, err := questionRepo.GetRelatedVideos(aggregates.Id{mockId}, 0, 100)
+			if err != nil {
+				panic(err)
+			}
+			if len(videos) != total {
+				t.Fatalf("Not filtering")
+			}
+			for i := 0; i < total; i++ {
+				if videos[i].Title != strconv.Itoa(i) {
+					t.Fatalf("Not ordered by retrieve list")
+				}
+			}
+		})
+
+		t.Run("Filter By Question using Pagination", func(t *testing.T) {
+			videos, err := questionRepo.GetRelatedVideos(aggregates.Id{mockId}, 2, 2)
+			if err != nil {
+				panic(err)
+			}
+			if len(videos) != 2 {
+				t.Fail()
+			}
+			for i := 0; i < 2; i++ {
+				if videos[i].Title != strconv.Itoa(i + 2) {
+					t.Fail()
+				}
+			}
+		})
+	})
+}
+
 
 
 

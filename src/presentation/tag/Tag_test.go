@@ -6,7 +6,7 @@ import (
 )
 
 func TestConversion(t *testing.T) {
-	t.Run("From request to Tag", func(t *testing.T) {
+	t.Run("From request to Name", func(t *testing.T) {
 		aggTag := fromRequestToTag(Tag{
 			Id: "1",
 			Name: "a",
@@ -21,7 +21,7 @@ func TestConversion(t *testing.T) {
 		}
 	})
 
-	t.Run("From Tag to Json", func(t *testing.T) {
+	t.Run("From Name to Json", func(t *testing.T) {
 		jsonTag := fromTagToJson(aggregates.Tag{
 			Id: aggregates.Id{
 				"1",

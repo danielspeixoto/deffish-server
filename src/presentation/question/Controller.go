@@ -3,7 +3,6 @@ package question
 import (
 	"deffish-server/src/aggregates"
 	"deffish-server/src/boundary/question"
-	"deffish-server/src/boundary/relatedVideo"
 	"deffish-server/src/presentation/data"
 	"encoding/json"
 	"errors"
@@ -14,10 +13,11 @@ import (
 )
 
 type Controller struct {
-	UploadUseCase       question.IUploadUseCase
-	RandomTagsUseCase   question.IRandomByTagsUseCase
-	GetById             question.IByIdUseCase
-	Videos	relatedVideo.IFilterByQuestionUseCase
+	UploadUseCase     question.IUploadUseCase
+	RandomTagsUseCase question.IRandomByTagsUseCase
+	GetByIdUseCase    question.IByIdUseCase
+	VideosUseCase     question.IGetRelatedVideos
+	AddTagUseCase     question.IAddTagUseCase
 }
 
 func (ctrl Controller) Upload(c *gin.Context) {
@@ -82,7 +82,7 @@ func (ctrl Controller) RandomByTags(c *gin.Context) {
 
 func (ctrl Controller) QuestionById(c *gin.Context)  {
 	id := c.Param("id")
-	q, err := ctrl.GetById.Id(aggregates.Id{Value: id})
+	q, err := ctrl.GetByIdUseCase.Id(aggregates.Id{Value: id})
 	if err != nil {
 		panic(err)
 	}
@@ -111,13 +111,40 @@ func (ctrl Controller) RelatedVideos(c *gin.Context) {
 	if err != nil {
 		panic(err)
 	}
-	v, err := ctrl.Videos.FilterByQuestion(aggregates.Id{id}, startInt, amountInt)
+	v, err := ctrl.VideosUseCase.GetRelatedVideos(aggregates.Id{id}, startInt, amountInt)
 	if err != nil {
 		panic(err)
 	}
 	err = json.NewEncoder(c.Writer).Encode(data.Response{
 		Status: "ok",
 		Data:   fromRelatedVideosToJsonArray(v),
+	})
+	if err != nil {
+		panic(err)
+	}
+}
+
+func (ctrl Controller) AddTag(c *gin.Context) {
+	id := c.Param("id")
+
+	request := c.Request
+	bodyBytes, err := ioutil.ReadAll(request.Body)
+	if err != nil { panic(err) }
+	var t struct {
+		Name string `json:"name"`
+	}
+	err = json.Unmarshal(bodyBytes, &t)
+	if err != nil {
+		log.Printf("request body of failed json parsing: %s", string(bodyBytes))
+		panic(err)
+	}
+
+	err = ctrl.AddTagUseCase.Add(aggregates.Id{id}, t.Name)
+	if err != nil {
+		panic(err)
+	}
+	err = json.NewEncoder(c.Writer).Encode(data.Response{
+		Status: "ok",
 	})
 	if err != nil {
 		panic(err)
