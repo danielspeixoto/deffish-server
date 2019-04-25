@@ -36,7 +36,7 @@ func (repo TagRepository) SuggestionsBySubStr(name string) ([]aggregates.Tag, er
 	ctx, _ := context.WithTimeout(context.Background(), 1 * time.Second)
 
 	res, err := repo.collection.Find(ctx,
-		bson.M{"name": name},
+		bson.D{{"name", primitive.Regex{Pattern: name, Options: ""}}},
 	)
 	if err != nil {
 		return []aggregates.Tag{}, err
