@@ -12,7 +12,7 @@ type IRouter interface {
 func NewRouter(topics IRouter, essays IRouter, status IRouter, questions IRouter, tag IRouter, port int) {
 	router := gin.Default()
 	status.Route(router.Group("/"))
-	questions.Route(router.Group("/questions"))
+	questions.Route(router.Group("/question"))
 	essays.Route(router.Group("/essay"))
 	topics.Route(router.Group("/topic"))
 	tag.Route(router.Group("/tag"))
