@@ -3,6 +3,7 @@ package tag
 import (
 	"deffish-server/src/aggregates"
 	"deffish-server/src/boundary/tag"
+	"strings"
 )
 
 type SuggestionsUseCase struct {
@@ -11,7 +12,7 @@ type SuggestionsUseCase struct {
 
 
 func (useCase SuggestionsUseCase) GetSuggestions(substr string) ([]aggregates.Tag, error) {
-	return useCase.Repo.SuggestionsBySubStr(substr)
+	return useCase.Repo.SuggestionsBySubStr(strings.ToLower(substr))
 }
 
 var _ tag.ISuggestionsBySubStr = (*SuggestionsUseCase)(nil)
