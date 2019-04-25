@@ -27,6 +27,7 @@ type Question struct {
 	Answer  int                `bson:"answer"`
 	Domain  string             `bson:"domain"`
 	Tags    []string           `bson:"tags"`
+	ReferenceId string `bson:"referenceId"`
 }
 
 func NewQuestionRepository(questions *mongo.Collection) *QuestionRepository {
@@ -138,6 +139,7 @@ func fromMongoToQuestion(doc Question) aggregates.Question {
 		Domain:  doc.Domain,
 		Answer:  doc.Answer,
 		Tags:    doc.Tags,
+		ReferenceId: doc.ReferenceId,
 	}
 }
 
@@ -151,5 +153,6 @@ func toMongoQuestion(question aggregates.Question) Question {
 		Answer:  question.Answer,
 		Domain:  question.Domain,
 		Tags:    question.Tags,
+		ReferenceId: question.ReferenceId,
 	}
 }

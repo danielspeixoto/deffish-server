@@ -14,6 +14,7 @@ type Question struct {
 	Domain  string   `json:"domain"`
 	Answer  int      `json:"answer"`
 	Tags    []string `json:"tags"`
+	ReferenceId string `json:"referenceId"`
 }
 
 func fromQuestionsToJsonArray(questions []aggregates.Question) []Question {
@@ -36,6 +37,7 @@ func fromRequestToQuestion(question Question) aggregates.Question {
 		Domain: question.Domain,
 		Answer: question.Answer,
 		Tags: question.Tags,
+		ReferenceId: question.ReferenceId,
 	}
 }
 
@@ -50,6 +52,7 @@ func fromQuestionToJson(question aggregates.Question) Question {
 		Domain:  question.Domain,
 		Answer:  question.Answer,
 		Tags:    question.Tags,
+		ReferenceId: question.ReferenceId,
 	}
 }
 
