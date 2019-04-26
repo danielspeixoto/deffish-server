@@ -40,7 +40,7 @@ func (repo TagRepository) SuggestionsBySubStr(name string) ([]aggregates.Tag, er
 			bson.M{ "$match":
 				bson.D{{"name", primitive.Regex{Pattern: name, Options: ""}}},
 			}},
-		{"", bson.M{"$limit": 10}},
+		//{"", bson.M{"$limit": 10}},
 	}
 
 	res, err := repo.collection.Aggregate(ctx, agg)

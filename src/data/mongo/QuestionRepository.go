@@ -98,7 +98,7 @@ func (repo QuestionRepository) Id(id aggregates.Id) (aggregates.Question, error)
 }
 
 func (repo QuestionRepository) random(field string, value []string, amount int) (mongo.Cursor, error) {
-	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, _ := context.WithTimeout(context.Background(), 10 * time.Second)
 
 	agg := bson.D{
 		{"", bson.M{

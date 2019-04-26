@@ -26,7 +26,7 @@ type RelatedVideo struct {
 }
 
 func fromRelatedVideosToJsonArray(relatedVideos []aggregates.RelatedVideo) []RelatedVideo {
-	var jsons []RelatedVideo
+	jsons := []RelatedVideo{}
 	for _, q := range relatedVideos {
 		jsons = append(jsons, fromRelatedVideoToJson(q))
 	}
