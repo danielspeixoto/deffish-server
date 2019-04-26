@@ -3,7 +3,7 @@ package question
 import "deffish-server/src/aggregates"
 
 var exampleQuestion = aggregates.Question{
-	PDF:     aggregates.PDF{},
+	View:    aggregates.View{},
 	Source:  "ENEM",
 	Variant: "Amarelo",
 	Edition: 2017,

@@ -5,16 +5,17 @@ import (
 )
 
 type Question struct {
-	Id      string   `json:"id"`
-	PDF     []byte   `json:"pdf"`
-	Source  string   `json:"source"`
-	Variant string   `json:"variant"`
-	Edition int      `json:"edition"`
-	Number  int      `json:"number"`
-	Domain  string   `json:"domain"`
-	Answer  int      `json:"answer"`
-	Tags    []string `json:"tags"`
-	ReferenceId string `json:"referenceId"`
+	Id          string   `json:"id"`
+	View        []byte   `json:"view"`
+	Source      string   `json:"source"`
+	Variant     string   `json:"variant"`
+	Edition     int      `json:"edition"`
+	Number      int      `json:"number"`
+	Domain      string   `json:"domain"`
+	Answer      int      `json:"answer"`
+	Tags        []string `json:"tags"`
+	ItemCode    string   `json:"itemCode"`
+	ReferenceId string   `json:"referenceId"`
 }
 
 func fromQuestionsToJsonArray(questions []aggregates.Question) []Question {
@@ -27,31 +28,33 @@ func fromQuestionsToJsonArray(questions []aggregates.Question) []Question {
 
 func fromRequestToQuestion(question Question) aggregates.Question {
 	return aggregates.Question{
-		PDF: aggregates.PDF{
-			question.PDF,
+		View: aggregates.View{
+			question.View,
 		},
-		Source: question.Source,
-		Variant: question.Variant,
-		Edition: question.Edition,
-		Number: question.Number,
-		Domain: question.Domain,
-		Answer: question.Answer,
-		Tags: question.Tags,
+		Source:      question.Source,
+		Variant:     question.Variant,
+		Edition:     question.Edition,
+		Number:      question.Number,
+		Domain:      question.Domain,
+		Answer:      question.Answer,
+		Tags:        question.Tags,
+		ItemCode:    question.ItemCode,
 		ReferenceId: question.ReferenceId,
 	}
 }
 
 func fromQuestionToJson(question aggregates.Question) Question {
 	return Question{
-		Id:      question.Id.Value,
-		PDF:     question.PDF.Contents,
-		Source:  question.Source,
-		Variant: question.Variant,
-		Edition: question.Edition,
-		Number:  question.Number,
-		Domain:  question.Domain,
-		Answer:  question.Answer,
-		Tags:    question.Tags,
+		Id:          question.Id.Value,
+		View:        question.View.Contents,
+		Source:      question.Source,
+		Variant:     question.Variant,
+		Edition:     question.Edition,
+		Number:      question.Number,
+		Domain:      question.Domain,
+		Answer:      question.Answer,
+		Tags:        question.Tags,
+		ItemCode:    question.ItemCode,
 		ReferenceId: question.ReferenceId,
 	}
 }

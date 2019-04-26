@@ -9,7 +9,7 @@ import (
 )
 
 var testQuestion = aggregates.Question{
-	PDF: aggregates.PDF{
+	View: aggregates.View{
 		[]byte{0, 0, 1},
 	},
 	Source:  "enem",
@@ -79,7 +79,7 @@ func TestQuestionManyItems(t *testing.T) {
 
 		for i := 0; i < 5; i++ {
 			question := aggregates.Question{
-				PDF:     aggregates.PDF{},
+				View:    aggregates.View{},
 				Source:  "enem",
 				Variant: "AMARELO",
 				Edition: 2017,
@@ -97,7 +97,7 @@ func TestQuestionManyItems(t *testing.T) {
 
 		for i := 0; i < 5; i++ {
 			question := aggregates.Question{
-				PDF:     aggregates.PDF{},
+				View:    aggregates.View{},
 				Source:  "enem",
 				Variant: "AMARELO",
 				Edition: 2017,

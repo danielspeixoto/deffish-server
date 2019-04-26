@@ -1,5 +1,5 @@
 package aggregates
 
-type PDF struct {
+type View struct {
 	Contents []byte
 }
