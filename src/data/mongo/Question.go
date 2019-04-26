@@ -10,7 +10,7 @@ import (
 
 type Question struct {
 	Id          primitive.ObjectID `bson:"_id,omitempty"`
-	view        []byte             `bson:"view"`
+	View        []byte             `bson:"view"`
 	Source      string             `bson:"source"`
 	Variant     string             `bson:"variant"`
 	Edition     int                `bson:"edition"`
@@ -41,7 +41,7 @@ func fromMongoToQuestion(doc Question) aggregates.Question {
 			Value: doc.Id.Hex(),
 		},
 		View:   aggregates.View{
-			doc.view,
+			doc.View,
 		},
 		Source:      doc.Source,
 		Variant:     doc.Variant,
@@ -57,7 +57,7 @@ func fromMongoToQuestion(doc Question) aggregates.Question {
 
 func toMongoQuestion(question aggregates.Question) Question {
 	return Question{
-		view:        question.View.Contents,
+		View:        question.View.Contents,
 		Source:      question.Source,
 		Variant:     question.Variant,
 		Edition:     question.Edition,
