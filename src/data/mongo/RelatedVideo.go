@@ -32,7 +32,7 @@ type RelatedVideo struct {
 }
 
 func fromCursorToRelatedVideos(cursor mongo.Cursor) ([]aggregates.RelatedVideo, error) {
-	ctx, _ := context.WithTimeout(context.Background(), 1 * time.Second)
+	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cursor.Close(ctx)
 	var items []aggregates.RelatedVideo
 	for cursor.Next(ctx) {
