@@ -19,7 +19,8 @@ type Question struct {
 	Domain      string             `bson:"domain"`
 	Tags        []string           `bson:"tags"`
 	ItemCode    string             `bson:"itemCode"`
-	ReferenceId string             `json:"referenceId"`
+	ReferenceId string             `bson:"referenceId"`
+	Stage int `bson:"stage"`
 }
 
 func fromCursorToQuestions(cursor mongo.Cursor) ([]aggregates.Question, error) {
@@ -52,6 +53,7 @@ func fromMongoToQuestion(doc Question) aggregates.Question {
 		Tags:        doc.Tags,
 		ItemCode:    doc.ItemCode,
 		ReferenceId: doc.ReferenceId,
+		Stage: doc.Stage,
 	}
 }
 
@@ -67,6 +69,7 @@ func toMongoQuestion(question aggregates.Question) Question {
 		Tags:        question.Tags,
 		ItemCode:    question.ItemCode,
 		ReferenceId: question.ReferenceId,
+		Stage: question.Stage,
 	}
 }
 

@@ -12,6 +12,7 @@ type Question struct {
 	Tags        []string
 	ItemCode    string
 	ReferenceId string
+	Stage int
 }
 
 
