@@ -34,7 +34,7 @@ func main() {
 		essay.GetRouter(repo.Essays),
 		status.Router{},
 		question.NewRouter(repo.Questions),
-		tag.NewRouter(repo.Tags),
+		tag.NewRouter(repo.Tags, repo.Questions),
 		config.Port)
 }
 
