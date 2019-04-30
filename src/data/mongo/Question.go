@@ -72,4 +72,3 @@ func toMongoQuestion(question aggregates.Question) Question {
 		Stage: question.Stage,
 	}
 }
-

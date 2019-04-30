@@ -22,4 +22,5 @@ type IUploadUseCase interface {
 
 type ISuggestionsBySubStr interface {
 	GetSuggestions(string) ([]aggregates.Tag, error)
+	GetSuggestionsWithQuestions(string) ([]aggregates.Tag, error)
 }

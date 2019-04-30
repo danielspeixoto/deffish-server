@@ -1,6 +1,7 @@
 package tag
 
 import (
+	"deffish-server/src/aggregates"
 	boundary "deffish-server/src/boundary/tag"
 	"deffish-server/src/presentation/data"
 	"encoding/json"
@@ -45,8 +46,16 @@ func (ctrl Controller) Post(c *gin.Context) {
 
 func (ctrl Controller) Get(c *gin.Context) {
 	query := c.Request.URL.Query()
+	hasQuestions := query.Get("hasQuestions")
 	if query.Get("mode") == "suggestion" {
-		res, err := ctrl.SuggestionsUseCase.GetSuggestions(query.Get("query"))
+		q := query.Get("query")
+		var res []aggregates.Tag
+		var err error
+		if hasQuestions != "" {
+			res, err = ctrl.SuggestionsUseCase.GetSuggestionsWithQuestions(q)
+		} else {
+			res, err = ctrl.SuggestionsUseCase.GetSuggestions(q)
+		}
 		if err != nil {
 			panic(err)
 		}

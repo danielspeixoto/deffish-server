@@ -191,3 +191,18 @@ func (mr *MockISuggestionsBySubStrMockRecorder) GetSuggestions(arg0 interface{})
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetSuggestions", reflect.TypeOf((*MockISuggestionsBySubStr)(nil).GetSuggestions), arg0)
 }
+
+// GetSuggestionsWithQuestions mocks base method
+func (m *MockISuggestionsBySubStr) GetSuggestionsWithQuestions(arg0 string) ([]aggregates.Tag, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetSuggestionsWithQuestions", arg0)
+	ret0, _ := ret[0].([]aggregates.Tag)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetSuggestionsWithQuestions indicates an expected call of GetSuggestionsWithQuestions
+func (mr *MockISuggestionsBySubStrMockRecorder) GetSuggestionsWithQuestions(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetSuggestionsWithQuestions", reflect.TypeOf((*MockISuggestionsBySubStr)(nil).GetSuggestionsWithQuestions), arg0)
+}

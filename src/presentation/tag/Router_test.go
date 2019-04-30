@@ -168,4 +168,57 @@ func TestRouter(t *testing.T) {
 			t.Errorf("Name is Different")
 		}
 	})
+
+	t.Run("Suggestions only questions with tags", func(t *testing.T) {
+		sugg.EXPECT().
+			GetSuggestionsWithQuestions("abc").
+			Return([]aggregates.Tag{
+				{
+					Id: aggregates.Id{
+						"1",
+					},
+					Name: "abc",
+				},
+				{
+					Id: aggregates.Id{
+						"2",
+					},
+					Name: "dcabc",
+				},
+				{
+					Id: aggregates.Id{
+						"3",
+					},
+					Name: "aaaabc",
+				},
+			}, nil)
+		res, err := http.Get(
+			url + "?mode=suggestion&query=abc&hasTags=1")
+		if err != nil {
+			panic(err)
+		}
+
+		bodyBytes, err := ioutil.ReadAll(res.Body)
+		if err != nil {
+			panic(err)
+		}
+
+		var jsonMap data.Response
+		err = json.Unmarshal(bodyBytes, &jsonMap)
+		if err != nil {
+			panic(err)
+		}
+
+		jsonData := jsonMap.Data.([]interface{})
+
+		if len(jsonData) != 3 {
+			t.Errorf("Size is Different")
+		}
+		if jsonData[0].(map[string]interface{})["id"] != "1" {
+			t.Errorf("Id is Different")
+		}
+		if jsonData[1].(map[string]interface{})["name"] != "dcabc" {
+			t.Errorf("Name is Different")
+		}
+	})
 }
