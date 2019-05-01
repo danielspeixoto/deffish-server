@@ -5,9 +5,9 @@ import (
 	"deffish-server/src/aggregates"
 	"deffish-server/src/boundary/essay"
 	"deffish-server/src/helpers"
-	"github.com/mongodb/mongo-go-driver/bson"
-	"github.com/mongodb/mongo-go-driver/bson/primitive"
-	"github.com/mongodb/mongo-go-driver/mongo"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 	"log"
 	"time"
 )
@@ -85,7 +85,7 @@ func (repo EssayRepository) Id(id aggregates.Id) (aggregates.Essay, error) {
 	return fromMongoToEssay(mongoEssay), nil
 }
 
-func fromCursorToEssays(cursor mongo.Cursor) ([]aggregates.Essay, error) {
+func fromCursorToEssays(cursor *mongo.Cursor) ([]aggregates.Essay, error) {
 	ctx, _ := context.WithTimeout(context.Background(), 1 * time.Second)
 	defer cursor.Close(ctx)
 	var items []aggregates.Essay

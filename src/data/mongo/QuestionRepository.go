@@ -4,9 +4,9 @@ import (
 	"context"
 	"deffish-server/src/aggregates"
 	"deffish-server/src/boundary/question"
-	"github.com/mongodb/mongo-go-driver/bson"
-	"github.com/mongodb/mongo-go-driver/bson/primitive"
-	"github.com/mongodb/mongo-go-driver/mongo"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 	"log"
 	"time"
 )
@@ -97,7 +97,7 @@ func (repo QuestionRepository) Id(id aggregates.Id) (aggregates.Question, error)
 	return fromMongoToQuestion(mongoQuestion), nil
 }
 
-func (repo QuestionRepository) random(field string, value []string, amount int) (mongo.Cursor, error) {
+func (repo QuestionRepository) random(field string, value []string, amount int) (*mongo.Cursor, error) {
 	ctx, _ := context.WithTimeout(context.Background(), 10 * time.Second)
 
 	agg := bson.D{

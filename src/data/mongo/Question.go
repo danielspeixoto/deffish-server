@@ -3,8 +3,8 @@ package mongo
 import (
 	"context"
 	"deffish-server/src/aggregates"
-	"github.com/mongodb/mongo-go-driver/bson/primitive"
-	"github.com/mongodb/mongo-go-driver/mongo"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 	"time"
 )
 
@@ -23,7 +23,7 @@ type Question struct {
 	Stage int `bson:"stage"`
 }
 
-func fromCursorToQuestions(cursor mongo.Cursor) ([]aggregates.Question, error) {
+func fromCursorToQuestions(cursor *mongo.Cursor) ([]aggregates.Question, error) {
 	ctx, _ := context.WithTimeout(context.Background(), 1 * time.Second)
 	defer cursor.Close(ctx)
 	var items []aggregates.Question

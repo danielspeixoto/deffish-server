@@ -3,8 +3,9 @@ package mongo
 import (
 	"context"
 	"deffish-server/src/aggregates"
-	"github.com/mongodb/mongo-go-driver/bson/primitive"
-	"github.com/mongodb/mongo-go-driver/mongo"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"
 	"time"
 )
@@ -21,7 +22,11 @@ func NewRepository(
 	uri string,
 	database string) *MongoRepository {
 	ctx, _ := context.WithTimeout(context.Background(), 1*time.Second)
-	client, err := mongo.Connect(ctx, uri)
+	client, err := mongo.NewClient(options.Client().ApplyURI(uri))
+	if err != nil {
+		panic(err)
+	}
+	err = client.Connect(ctx)
 	if err != nil {
 		panic(err)
 	}

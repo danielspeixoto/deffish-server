@@ -3,8 +3,8 @@ package mongo
 import (
 	"context"
 	"deffish-server/src/aggregates"
-	"github.com/mongodb/mongo-go-driver/bson/primitive"
-	"github.com/mongodb/mongo-go-driver/mongo"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 	"time"
 )
 
@@ -31,7 +31,7 @@ type RelatedVideo struct {
 	//PublishedAt int64 `bson"/"`
 }
 
-func fromCursorToRelatedVideos(cursor mongo.Cursor) ([]aggregates.RelatedVideo, error) {
+func fromCursorToRelatedVideos(cursor *mongo.Cursor) ([]aggregates.RelatedVideo, error) {
 	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cursor.Close(ctx)
 	var items []aggregates.RelatedVideo

@@ -4,9 +4,9 @@ import (
 	"context"
 	"deffish-server/src/aggregates"
 	"deffish-server/src/boundary/tag"
-	"github.com/mongodb/mongo-go-driver/bson"
-	"github.com/mongodb/mongo-go-driver/bson/primitive"
-	"github.com/mongodb/mongo-go-driver/mongo"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 	"time"
 )
 
@@ -57,7 +57,7 @@ type Tag struct {
 	Name string
 }
 
-func fromCursorToTags(cursor mongo.Cursor) ([]aggregates.Tag, error) {
+func fromCursorToTags(cursor *mongo.Cursor) ([]aggregates.Tag, error) {
 	ctx, _ := context.WithTimeout(context.Background(), 1 * time.Second)
 	defer cursor.Close(ctx)
 	var items []aggregates.Tag

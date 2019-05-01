@@ -5,9 +5,9 @@ import (
 	"deffish-server/src/aggregates"
 	"deffish-server/src/boundary/topic"
 	"deffish-server/src/helpers"
-	"github.com/mongodb/mongo-go-driver/bson"
-	"github.com/mongodb/mongo-go-driver/bson/primitive"
-	"github.com/mongodb/mongo-go-driver/mongo"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 	"time"
 )
 
@@ -64,7 +64,7 @@ func (repo TopicRepository) Id(id aggregates.Id) (aggregates.Topic, error) {
 	return fromMongoToTopic(mongoTopic), nil
 }
 
-func fromCursorToTopics(cursor mongo.Cursor) ([]aggregates.Topic, error) {
+func fromCursorToTopics(cursor *mongo.Cursor) ([]aggregates.Topic, error) {
 	ctx, _ := context.WithTimeout(context.Background(), 1 * time.Second)
 	defer cursor.Close(ctx)
 	var items []aggregates.Topic
