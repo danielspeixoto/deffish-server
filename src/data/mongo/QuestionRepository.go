@@ -17,7 +17,7 @@ type QuestionRepository struct {
 }
 
 func (repo QuestionRepository) Add(id aggregates.Id, tag string) error {
-	ctx, _ := context.WithTimeout(context.Background(), 10 * time.Second)
+	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
 	objId, err := primitive.ObjectIDFromHex(id.Value)
 	if err != nil {
 		return err
@@ -28,23 +28,25 @@ func (repo QuestionRepository) Add(id aggregates.Id, tag string) error {
 }
 
 func (repo QuestionRepository) GetRelatedVideos(id aggregates.Id, start int, count int) ([]aggregates.RelatedVideo, error) {
-	ctx, _ := context.WithTimeout(context.Background(), 10 * time.Second)
+	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
 	objId, err := primitive.ObjectIDFromHex(id.Value)
 	if err != nil {
 		return []aggregates.RelatedVideo{}, err
 	}
 
-	agg := bson.D{
-		{"", bson.M{
+	agg := []bson.M{
+		{
 			"$match": bson.M{
 				"questionId": objId,
 			},
-		}},
-		{"", bson.M{"$sort": bson.M{
-			"retrievalPosition": 1,
-		}}},
-		{"", bson.M{"$skip": start}},
-		{"", bson.M{"$limit": count}},
+		},
+		{
+			"$sort": bson.M{
+				"retrievalPosition": 1,
+			},
+		},
+		{"$skip": start},
+		{"$limit": count},
 	}
 
 	cursor, err := repo.relatedVideosCollection.Aggregate(ctx, agg)
@@ -55,7 +57,7 @@ func (repo QuestionRepository) GetRelatedVideos(id aggregates.Id, start int, cou
 }
 
 func (repo QuestionRepository) Insert(question aggregates.Question) (aggregates.Id, error) {
-	ctx, _ := context.WithTimeout(context.Background(), 10 * time.Second)
+	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
 	res, err := repo.questionsCollection.InsertOne(
 		ctx,
 		toMongoQuestion(question))
@@ -70,7 +72,7 @@ func (repo QuestionRepository) Insert(question aggregates.Question) (aggregates.
 }
 
 func (repo QuestionRepository) Find() ([]aggregates.Question, error) {
-	ctx, _ := context.WithTimeout(context.Background(), 10 * time.Second)
+	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
 	cursor, err := repo.questionsCollection.Find(ctx, nil)
 	if err != nil {
 		return nil, err
@@ -79,7 +81,7 @@ func (repo QuestionRepository) Find() ([]aggregates.Question, error) {
 }
 
 func (repo QuestionRepository) Id(id aggregates.Id) (aggregates.Question, error) {
-	ctx, _ := context.WithTimeout(context.Background(), 10 * time.Second)
+	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
 
 	objId, err := primitive.ObjectIDFromHex(id.Value)
 	if err != nil {
@@ -98,22 +100,26 @@ func (repo QuestionRepository) Id(id aggregates.Id) (aggregates.Question, error)
 }
 
 func (repo QuestionRepository) random(field string, value []string, amount int) (*mongo.Cursor, error) {
-	ctx, _ := context.WithTimeout(context.Background(), 10 * time.Second)
+	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
 
-	agg := bson.D{
-		{"", bson.M{
+	agg := []bson.M{
+		{
 			"$match": bson.M{
 				field: bson.M{
 					"$all": value,
 				},
 			},
-		}},
-		{"", bson.M{"$sample": bson.M{"size": amount}}},
+		},
+		{
+			"$sample": bson.M{"size": amount},
+		},
 	}
 
 	if len(value) == 0 {
-		agg = bson.D{
-			{"", bson.M{"$sample": bson.M{"size": amount}}},
+		agg = []bson.M{
+			{
+				"$sample": bson.M{"size": amount},
+			},
 		}
 	}
 	return repo.questionsCollection.Aggregate(ctx, agg)

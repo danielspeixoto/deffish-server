@@ -50,8 +50,8 @@ func (repo EssayRepository) FilterByTopic(topicId aggregates.Id) ([]aggregates.E
 func (repo EssayRepository) Random(amount int) ([]aggregates.Essay, error) {
 	ctx, _ := context.WithTimeout(context.Background(), 10 * time.Second)
 
-	cursor, err := repo.collection.Aggregate(ctx,  bson.D{
-		{"", bson.M{ "$sample": bson.M{"size": amount} }},
+	cursor, err := repo.collection.Aggregate(ctx,  []bson.M{
+		{ "$sample": bson.M{"size": amount} },
 	})
 	if err != nil { return nil, err }
 	return fromCursorToEssays(cursor)

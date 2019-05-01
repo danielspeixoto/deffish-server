@@ -7,6 +7,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"log"
 	"time"
 )
 
@@ -16,11 +17,11 @@ type TagRepository struct {
 
 func (repo TagRepository) Insert(tag aggregates.Tag) (aggregates.Id, error) {
 	id, err := insert(repo.collection, toMongoTag(tag))
-	return id,  err
+	return id, err
 }
 
 func (repo TagRepository) GetByName(name string) (aggregates.Tag, error) {
-	ctx, _ := context.WithTimeout(context.Background(), 1 * time.Second)
+	ctx, _ := context.WithTimeout(context.Background(), 1*time.Second)
 
 	res := repo.collection.FindOne(ctx,
 		bson.M{"name": name},
@@ -28,19 +29,22 @@ func (repo TagRepository) GetByName(name string) (aggregates.Tag, error) {
 
 	var mongoTag Tag
 	err := res.Decode(&mongoTag)
-	if err != nil { return aggregates.Tag{}, err }
+	if err != nil {
+		return aggregates.Tag{}, err
+	}
 	return fromMongoToTag(mongoTag), nil
 }
 
 func (repo TagRepository) SuggestionsBySubStr(name string) ([]aggregates.Tag, error) {
-	ctx, _ := context.WithTimeout(context.Background(), 1 * time.Second)
+	ctx, _ := context.WithTimeout(context.Background(), 1*time.Second)
 
-	agg := bson.D{
-		{"",
-			bson.M{ "$match":
-				bson.D{{"name", primitive.Regex{Pattern: name, Options: ""}}},
-			}},
-		//{"", bson.M{"$limit": 10}},
+	log.Print(name)
+	agg := []bson.M{
+		{
+			"$match": bson.M{
+				"name": primitive.Regex{Pattern: name, Options: ""},
+			},
+		},
 	}
 
 	res, err := repo.collection.Aggregate(ctx, agg)
@@ -53,32 +57,34 @@ func (repo TagRepository) SuggestionsBySubStr(name string) ([]aggregates.Tag, er
 var _ tag.IRepository = (*TagRepository)(nil)
 
 type Tag struct {
-	Id primitive.ObjectID `bson:"_id,omitempty"`
+	Id   primitive.ObjectID `bson:"_id,omitempty"`
 	Name string
 }
 
 func fromCursorToTags(cursor *mongo.Cursor) ([]aggregates.Tag, error) {
-	ctx, _ := context.WithTimeout(context.Background(), 1 * time.Second)
+	ctx, _ := context.WithTimeout(context.Background(), 1*time.Second)
 	defer cursor.Close(ctx)
 	var items []aggregates.Tag
 	for cursor.Next(ctx) {
 		var doc Tag
 		err := cursor.Decode(&doc)
-		if err != nil { return nil, err }
+		if err != nil {
+			return nil, err
+		}
 		items = append(items, fromMongoToTag(doc))
 	}
 	return items, nil
 }
 
 func toMongoTag(tag aggregates.Tag) Tag {
-	return Tag {
+	return Tag{
 		Name: tag.Name,
 	}
 }
 
 func fromMongoToTag(doc Tag) aggregates.Tag {
 	return aggregates.Tag{
-		Id: aggregates.Id {
+		Id: aggregates.Id{
 			Value: doc.Id.Hex(),
 		},
 		Name: doc.Name,

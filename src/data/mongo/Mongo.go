@@ -6,6 +6,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/mongo/readpref"
 	"log"
 	"time"
 )
@@ -21,16 +22,16 @@ type MongoRepository struct {
 func NewRepository(
 	uri string,
 	database string) *MongoRepository {
-	ctx, _ := context.WithTimeout(context.Background(), 1*time.Second)
-	client, err := mongo.NewClient(options.Client().ApplyURI(uri))
-	if err != nil {
-		panic(err)
-	}
-	err = client.Connect(ctx)
+	ctx, _ := context.WithTimeout(context.Background(), 20*time.Second)
+	client, err := mongo.Connect(ctx, options.Client().ApplyURI(uri))
 	if err != nil {
 		panic(err)
 	}
 	log.Printf("Connection to mongo successfull")
+	err = client.Ping(ctx, readpref.Primary())
+	if err != nil {
+		panic(err)
+	}
 	db := client.Database(database)
 
 	var collections []*mongo.Collection
