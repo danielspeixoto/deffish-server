@@ -28,7 +28,7 @@ type RelatedVideo struct {
 	Thumbnails        `bson:"thumbnails"`
 	Description       string `bson:"description"`
 	VideoId string `bson:"videoId"`
-	//PublishedAt int64 `bson"/"`
+	AspectRatio float64 `bson:"aspectRation"`
 }
 
 func fromCursorToRelatedVideos(cursor *mongo.Cursor) ([]aggregates.RelatedVideo, error) {
@@ -70,6 +70,7 @@ func fromMongoToRelatedVideo(doc RelatedVideo) aggregates.RelatedVideo {
 				doc.Channel.Id,
 			},
 		},
+		AspectRatio: doc.AspectRatio,
 	}
 }
 
@@ -92,5 +93,6 @@ func toMongoRelatedVideo(relatedVideo aggregates.RelatedVideo) RelatedVideo {
 		},
 		Description: relatedVideo.Description,
 		VideoId: relatedVideo.VideoId.Value,
+		AspectRatio: relatedVideo.AspectRatio,
 	}
 }

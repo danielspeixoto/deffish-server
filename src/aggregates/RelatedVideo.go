@@ -19,4 +19,5 @@ type RelatedVideo struct {
 	Channel
 	VideoId Id
 	QuestionId Id
+	AspectRatio float64
 }

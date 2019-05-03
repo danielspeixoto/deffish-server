@@ -23,6 +23,7 @@ type RelatedVideo struct {
 	Channel           `json:"channel"`
 	VideoId string `json:"videoId"`
 	QuestionId        string `json:"questionId"`
+	AspectRatio float64 `json:"aspectRatio"`
 }
 
 func fromRelatedVideosToJsonArray(relatedVideos []aggregates.RelatedVideo) []RelatedVideo {
@@ -49,5 +50,6 @@ func fromRelatedVideoToJson(relatedVideo aggregates.RelatedVideo) RelatedVideo {
 		},
 		VideoId:    relatedVideo.VideoId.Value,
 		QuestionId: relatedVideo.QuestionId.Value,
+		AspectRatio: relatedVideo.AspectRatio,
 	}
 }
