@@ -17,6 +17,8 @@ type Question struct {
 	ItemCode    string   `json:"itemCode"`
 	ReferenceId string   `json:"referenceId"`
 	Stage int `json:"stage"`
+	Width int `json:"width"`
+	Height int `json:"height"`
 }
 
 func fromQuestionsToJsonArray(questions []aggregates.Question) []Question {
@@ -42,6 +44,8 @@ func fromRequestToQuestion(question Question) aggregates.Question {
 		ItemCode:    question.ItemCode,
 		ReferenceId: question.ReferenceId,
 		Stage: question.Stage,
+		Width: question.Width,
+		Height: question.Height,
 	}
 }
 
@@ -59,6 +63,8 @@ func fromQuestionToJson(question aggregates.Question) Question {
 		ItemCode:    question.ItemCode,
 		ReferenceId: question.ReferenceId,
 		Stage: question.Stage,
+		Width: question.Width,
+		Height: question.Height,
 	}
 }
 

@@ -21,6 +21,9 @@ type Question struct {
 	ItemCode    string             `bson:"itemCode"`
 	ReferenceId string             `bson:"referenceId"`
 	Stage int `bson:"stage"`
+	Width int `bson:"width"`
+	Height int `bson:"height"`
+
 }
 
 func fromCursorToQuestions(cursor *mongo.Cursor) ([]aggregates.Question, error) {
@@ -54,6 +57,8 @@ func fromMongoToQuestion(doc Question) aggregates.Question {
 		ItemCode:    doc.ItemCode,
 		ReferenceId: doc.ReferenceId,
 		Stage: doc.Stage,
+		Width: doc.Width,
+		Height: doc.Height,
 	}
 }
 
@@ -70,5 +75,7 @@ func toMongoQuestion(question aggregates.Question) Question {
 		ItemCode:    question.ItemCode,
 		ReferenceId: question.ReferenceId,
 		Stage: question.Stage,
+		Width: question.Width,
+		Height: question.Height,
 	}
 }

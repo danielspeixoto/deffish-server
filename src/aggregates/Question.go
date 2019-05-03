@@ -13,6 +13,8 @@ type Question struct {
 	ItemCode    string
 	ReferenceId string
 	Stage int
+	Width int
+	Height int
 }
 
 

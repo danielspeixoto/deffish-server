@@ -9,6 +9,7 @@ import (
 	"deffish-server/src/presentation/tag"
 	"deffish-server/src/presentation/topic"
 	"fmt"
+	_ "github.com/heroku/x/hmetrics/onload"
 	"log"
 	"os"
 	"strconv"
