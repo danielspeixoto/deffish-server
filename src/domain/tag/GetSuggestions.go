@@ -13,21 +13,7 @@ type SuggestionsUseCase struct {
 }
 
 func (useCase SuggestionsUseCase) GetSuggestionsWithQuestions(query string) ([]aggregates.Tag, error) {
-	tags, err := useCase.GetSuggestions(query)
-	if err != nil {
-		return []aggregates.Tag{}, err
-	}
-	filter := make([]aggregates.Tag, 0)
-	for _, t := range tags {
-		questions, err := useCase.QuestionRepo.RandomByTags(1, []string { t.Name } )
-		if err != nil {
-			return tags, err
-		}
-		if len(questions) > 0 {
-			filter = append(filter, t)
-		}
-	}
-	return filter, nil
+	return useCase.GetSuggestions(query)
 }
 
 func (useCase SuggestionsUseCase) GetSuggestions(substr string) ([]aggregates.Tag, error) {
