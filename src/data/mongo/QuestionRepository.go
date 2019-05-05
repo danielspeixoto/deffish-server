@@ -4,6 +4,7 @@ import (
 	"context"
 	"deffish-server/src/aggregates"
 	"deffish-server/src/boundary/question"
+	"github.com/reactivex/rxgo/errors"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -22,8 +23,14 @@ func (repo QuestionRepository) Add(id aggregates.Id, tag string) error {
 	if err != nil {
 		return err
 	}
-	_, err = repo.questionsCollection.UpdateOne(ctx, bson.M{"_id": objId},
-		bson.M{"$push": bson.M{"tags": tag}})
+	res, err := repo.questionsCollection.UpdateOne(ctx, bson.M{"_id": objId},
+		bson.M{"$addToSet": bson.M{"tags": tag}})
+	if err != nil {
+		return err
+	}
+	if res.ModifiedCount == 0 {
+		return errors.New("already has tag")
+	}
 	return err
 }
 
