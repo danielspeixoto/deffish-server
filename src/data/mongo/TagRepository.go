@@ -57,7 +57,7 @@ func (repo TagRepository) SuggestionsBySubStr(name string, minCount int) ([]aggr
 			"$match": bson.M{
 				"name": primitive.Regex{Pattern: name, Options: ""},
 				"amount": bson.M{
-					"$gt": minCount,
+					"$gte": minCount,
 				},
 			},
 		},
