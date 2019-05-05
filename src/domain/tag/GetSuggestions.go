@@ -13,11 +13,11 @@ type SuggestionsUseCase struct {
 }
 
 func (useCase SuggestionsUseCase) GetSuggestionsWithQuestions(query string) ([]aggregates.Tag, error) {
-	return useCase.GetSuggestions(query)
+	return useCase.TagRepo.SuggestionsBySubStr(strings.ToLower(query), 10)
 }
 
 func (useCase SuggestionsUseCase) GetSuggestions(substr string) ([]aggregates.Tag, error) {
-	return useCase.TagRepo.SuggestionsBySubStr(strings.ToLower(substr))
+	return useCase.TagRepo.SuggestionsBySubStr(strings.ToLower(substr), 0)
 }
 
 var _ tag.ISuggestionsBySubStr = (*SuggestionsUseCase)(nil)

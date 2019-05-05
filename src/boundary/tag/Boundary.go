@@ -7,7 +7,8 @@ import (
 type IRepository interface {
 	Insert(aggregates.Tag) (aggregates.Id, error)
 	GetByName(string) (aggregates.Tag, error)
-	SuggestionsBySubStr(string) ([]aggregates.Tag, error)
+	SuggestionsBySubStr(string, int) ([]aggregates.Tag, error)
+	IncrementCount(string) error
 }
 
 

@@ -54,7 +54,7 @@ func TestTagManyItems(t *testing.T) {
 		})
 
 		t.Run("Suggestion using beginning substr", func(t *testing.T) {
-			result, err := tagRepo.SuggestionsBySubStr("my")
+			result, err := tagRepo.SuggestionsBySubStr("my", 0)
 			if err != nil { t.Fatal(err) }
 			expected := []string{"mytag", "mytag2", "mybear"}
 			sort.Strings(expected)
@@ -70,7 +70,7 @@ func TestTagManyItems(t *testing.T) {
 		})
 
 		t.Run("Suggestion using middle substr", func(t *testing.T) {
-			result, err := tagRepo.SuggestionsBySubStr("tag")
+			result, err := tagRepo.SuggestionsBySubStr("tag", 0)
 			if err != nil { t.Fatal(err) }
 			expected := []string{"mytag", "mytag2"}
 			sort.Strings(expected)
