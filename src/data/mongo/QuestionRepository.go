@@ -29,7 +29,7 @@ func (repo QuestionRepository) Add(id aggregates.Id, tag string) error {
 		return err
 	}
 	if res.ModifiedCount == 0 {
-		return errors.New("already has tag")
+		return errors.New(errors.ErrorCode(123), "already has tag")
 	}
 	return err
 }
